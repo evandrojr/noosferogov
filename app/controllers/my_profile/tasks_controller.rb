@@ -65,7 +65,7 @@ class TasksController < MyProfileController
       session[:notice] = _("Some decisions couldn't be applied.")
       url[:failed] = failed
     end
-    redirect_to url
+    redirect_with_filters url
   end
 
   def new
@@ -76,7 +76,8 @@ class TasksController < MyProfileController
     @ticket.requestor = profile
     if request.post?
       if @ticket.save
-        redirect_to :action => 'index'
+        url = {:action => 'index'}
+        redirect_to url
       end
     end
   end
@@ -89,4 +90,11 @@ class TasksController < MyProfileController
     @ticket = Ticket.find(:first, :conditions => ['(requestor_id = ? or target_id = ?) and id = ?', profile.id, profile.id, params[:id]])
   end
 
+  protected
+
+  def redirect_with_filters(url_data)
+
+    filter_params = params.select {|p| p =~ /filter_/}
+    redirect_to url_data.merge(filter_params)
+  end
 end
