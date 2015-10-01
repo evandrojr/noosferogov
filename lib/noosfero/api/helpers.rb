@@ -29,7 +29,7 @@ require 'grape'
 
       def logout_tmp_user
         @current_tmp_user = nil
-      end      
+      end
 
       def current_user
         private_token = (params[PRIVATE_TOKEN_PARAM] || headers['Private-Token']).to_s
@@ -274,7 +274,7 @@ require 'grape'
         unauthorized! unless current_user
       end
 
-      # Allows the anonymous captcha user authentication 
+      # Allows the anonymous captcha user authentication
       # to pass the check. Used by the articles/vote to allow
       # the vote without login
       def authenticate_allow_captcha!
@@ -412,29 +412,14 @@ require 'grape'
       ##########################################
 
       def test_captcha(remote_ip, params, environment)
-        d = environment.api_captcha_settings
-        return true unless d[:enabled] == true
-        msg_icve = _('Internal captcha validation error')
-        msg_eacs = 'Environment api_captcha_settings'
-        s = 500
-
-        if d[:provider] == 'google'
-          return render_api_error!(msg_icve, s, nil, "#{msg_eacs} private_key not defined") if d[:private_key].nil?
-          return render_api_error!(msg_icve, s, nil, "#{msg_eacs} version not defined") unless d[:version] == 1 || d[:version] == 2
-          if d[:version]  == 1
-            d[:verify_uri] ||= 'https://www.google.com/recaptcha/api/verify'
-            return verify_recaptcha_v1(remote_ip, d[:private_key], d[:verify_uri], params[:recaptcha_challenge_field], params[:recaptcha_response_field])
-          end
-          if d[:version] == 2
-            d[:verify_uri] ||= 'https://www.google.com/recaptcha/api/siteverify'
-            return verify_recaptcha_v2(remote_ip, d[:private_key], d[:verify_uri], params[:g_recaptcha_response])
-          end
+        captcha_plugin_enabled = @plugins.dispatch(:test_captcha, remote_ip, params, environment)
+        return true if captcha_plugin_enabled.size == 0
+        if captcha_plugin_enabled.size > 1
+          return render_api_error!(_("Error processing Captcha"), 500, nil, "More than one captcha plugin enabled")
         end
-        if d[:provider] == 'serpro'
-          return render_api_error!(msg_icve, s, nil, "#{msg_eacs} verify_uri not defined") if d[:verify_uri].nil?
-          return verify_serpro_captcha(d[:serpro_client_id], params[:txtToken_captcha_serpro_gov_br], params[:captcha_text], d[:verify_uri])
-        end
-        return render_api_error!(msg_icve, s, nil, "#{msg_eacs} provider not defined")
+        test_result = captcha_plugin_enabled[0]
+        return true if test_result === true
+        render_api_error!(test_result[:user_message], test_result[:status], test_result[:log_message], test_result[:javascript_console_message])
       end
 
       def verify_recaptcha_v1(remote_ip, private_key, api_recaptcha_verify_uri, recaptcha_challenge_field, recaptcha_response_field)
