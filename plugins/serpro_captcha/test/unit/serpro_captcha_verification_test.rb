@@ -35,13 +35,13 @@ class SerproCaptchaVerificationTest < ActiveSupport::TestCase
       post "/api/v1/register?#{params.to_query}"
       assert_equal 403, last_response.status
       json = JSON.parse(last_response.body)
-      assert_equal json["message"],  _("Wrong captcha text, please try again")
+      assert_equal json["message"], _("Wrong captcha text, please try again")
   end
 
   should 'verify_serpro_captcha' do
     pass_captcha @environment.serpro_captcha_verify_uri, @captcha_verification_body
     scv = SerproCaptchaVerification.new
-    assert scv.verify_serpro_captcha(@environment.serpro_captcha_client_id, @captcha_token, '44641441', @environment.serpro_captcha_verify_uri)
+    assert scv.verify_serpro_captcha(@environment.serpro_captcha_client_id, @captcha_token, @captcha_text, @environment.serpro_captcha_verify_uri)
   end
 
   should 'fail captcha if user has not filled Serpro\' captcha text' do
