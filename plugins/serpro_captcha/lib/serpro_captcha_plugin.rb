@@ -13,8 +13,8 @@ class SerproCaptchaPlugin < Noosfero::Plugin
   end
 
   def test_captcha(remote_ip, params, environment)
-    spv = SerproCaptchaVerification.new
-    return spv.verify_serpro_captcha(environment.serpro_captcha_client_id, params[:txtToken_captcha_serpro_gov_br], params[:captcha_text], environment.serpro_captcha_verify_uri)
+    scv = SerproCaptchaVerification.new
+    return scv.verify_serpro_captcha(environment.serpro_captcha_client_id, params[:txtToken_captcha_serpro_gov_br], params[:captcha_text], environment.serpro_captcha_verify_uri)
   end
 
 end

@@ -14,18 +14,14 @@ class SerproCaptchaVerification
     request = Net::HTTP::Post.new(uri.path)
     verify_string = "#{client_id}&#{token}&#{captcha_text}"
     request.body = verify_string
-    begin
-      body = http.request(request).body
-    rescue Exception => e
-      return hash_error(_('Internal captcha validation error'), 500, nil, "Serpro captcha error: #{e.message}")
-    end
+    body = http.request(request).body
     return true if body == '1'
     return hash_error(_("Internal captcha validation error"), 500, body, "Unable to reach Serpro's Captcha validation service") if body == "Activity timed out"
-    return hash_error(_("Wrong captcha text, please try again"), 403) if body == 0
-    return hash_error(_("Serpro's captcha token not found"), 500) if body == 2
+    return hash_error(_("Wrong captcha text, please try again"), 403) if body == '0'
+    return hash_error(_("Serpro's captcha token not found"), 500) if body == '2'
     return hash_error(_("No data sent to validation server or other serious problem"), 500) if body == -1
     #Catches all errors at the end
-    return hash_error(_("Internal captcha validation error"), 500, nil, "Error validating Serpro's captcha #{body}")
+    return hash_error(_("Internal captcha validation error"), 500, nil, "Error validating Serpro's captcha service returned: #{body}")
   end
 
   def hash_error(user_message, status, log_message=nil, javascript_console_message=nil)

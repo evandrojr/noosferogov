@@ -8,22 +8,18 @@ class ActiveSupport::TestCase
     Noosfero::API::API
   end
 
-  def pass_captcha
-    stub_request(:post, "http://www.somecompany.com:443/validate").
-      with(:body => "323232&642646&44641441",
+  def pass_captcha(mocked_url, captcha_verification_body)
+    stub_request(:post, mocked_url).
+      with(:body => captcha_verification_body,
            :headers => {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "1", :headers => {'Content-Length' => 1})
-    spv = SerproCaptchaVerification.new
-    assert spv.verify_serpro_captcha(@environment.serpro_captcha_client_id, '642646', '44641441', @environment.serpro_captcha_verify_uri)
   end
 
-  def fail_captcha
-    stub_request(:post, "http://www.somecompany.com:443/validate").
-      with(:body => "323232&642646&44641441",
+  def fail_captcha_text(mocked_url, captcha_verification_body)
+    stub_request(:post, mocked_url).
+      with(:body => captcha_verification_body,
            :headers => {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
-      to_return(:status => 200, :body => "2", :headers => {'Content-Length' => 1})
-    spv = SerproCaptchaVerification.new
-    assert spv.verify_serpro_captcha(@environment.serpro_captcha_client_id, '642646', '44641441', @environment.serpro_captcha_verify_uri)
+      to_return(:status => 200, :body => "0", :headers => {'Content-Length' => 1})
   end
 
   def login_with_captcha
