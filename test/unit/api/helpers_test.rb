@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper';
 
+
 require File.expand_path(File.dirname(__FILE__) + "/../../../lib/noosfero/api/helpers")
 
 class APIHelpersTest < ActiveSupport::TestCase
@@ -216,10 +217,15 @@ class APIHelpersTest < ActiveSupport::TestCase
 
 ###### Captcha tests ######
 
-should 'do not test captcha when there is no captcha plugin enabled' do
-  environment = Environment.new
-  assert test_captcha("127.0.0.1", {}, environment)
-end
+# def plugins
+#   environment = Environment.default
+#   Noosfero::Plugin::Manager.new(environment, self)
+# end
+#
+# should 'do not test captcha when there is no captcha plugin enabled' do
+#   environment = Environment.new
+#   assert test_captcha("127.0.0.1", {}, environment)
+# end
 
 ###### END Captcha tests ######
 

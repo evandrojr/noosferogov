@@ -138,6 +138,7 @@ module Noosfero
             named 'ArticleVote'
           end
           post ':id/vote' do
+            binding.pry
             ## The vote api should allow regular login or with captcha
             authenticate_allow_captcha!
             value = (params[:value] || 1).to_i

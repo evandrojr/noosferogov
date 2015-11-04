@@ -76,6 +76,7 @@ class SessionTest < ActiveSupport::TestCase
   end
 
   should 'not register a user without email' do
+    #binding.pry
     params = {:login => "newuserapi", :password => "newuserapi", :password_confirmation => "newuserapi", :email => nil }
     post "/api/v1/register?#{params.to_query}"
     assert_equal 400, last_response.status
@@ -185,7 +186,7 @@ class SessionTest < ActiveSupport::TestCase
 
   should 'do not change user password when password confirmation is wrong' do
     user = create_user
-    user.activate 
+    user.activate
     task = ChangePassword.create!(:requestor => user.person)
     params = {:code => task.code, :password => 'secret', :password_confirmation => 's3cret'}
     patch "/api/v1/new_password?#{params.to_query}"

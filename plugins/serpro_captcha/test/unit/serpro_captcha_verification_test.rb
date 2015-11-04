@@ -16,6 +16,20 @@ class SerproCaptchaVerificationTest < ActiveSupport::TestCase
     @captcha_verification_body = "#{@environment.serpro_captcha_client_id}&#{@captcha_token}&#{@captcha_text}"
   end
 
+  def login_with_captcha
+    store = Noosfero::API::SessionStore.create("captcha")
+    ## Initialize the data for the session store
+    store.data = []
+    ## Put it back in cache
+    store.store
+    { "private_token" => "#{store.private_token}" }
+  end
+
+  def create_article(name)
+    person = fast_create(Person, :environment_id => @environment.id)
+    fast_create(Article, :profile_id => person.id, :name => name)
+  end
+
   should 'register a user when there are no enabled captcha pluging' do
       @environment.enabled_plugins = []
       @environment.save!
@@ -63,6 +77,30 @@ class SerproCaptchaVerificationTest < ActiveSupport::TestCase
     scv = SerproCaptchaVerification.new
     hash = scv.verify_serpro_captcha(@environment.serpro_captcha_client_id, nil, @captcha_text, @environment.serpro_captcha_verify_uri)
     assert hash[:javascript_console_message], _("Wrong captcha text, please try again")
+  end
+
+  should 'not perform a vote without authentication' do
+    article = create_article('Article 1')
+    params = {}
+    params[:value] = 1
+
+    post "/api/v1/articles/#{article.id}/vote?#{params.to_query}"
+    json = JSON.parse(last_response.body)
+    assert_equal 401, last_response.status
+  end
+
+  should 'perform a vote on an article identified by id' do
+    binding.pry
+    login_with_captcha
+    article = create_article('Article 1')
+    params = {}
+    params[:value] = 1
+
+    post "/api/v1/articles/#{article.id}/vote?#{params.to_query}"
+    json = JSON.parse(last_response.body)
+
+    assert_not_equal 401, last_response.status
+    assert_equal true, json['vote']
   end
 
 end

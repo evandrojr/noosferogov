@@ -412,6 +412,10 @@ require 'grape'
       #              captcha_helpers           #
       ##########################################
 
+      # def plugins
+      #   @plugins
+      # end
+
       def test_captcha(remote_ip, params, environment)
         captcha_plugin_enabled = @plugins.dispatch(:test_captcha, remote_ip, params, environment)
         return true if captcha_plugin_enabled.size == 0
@@ -421,76 +425,6 @@ require 'grape'
         test_result = captcha_plugin_enabled[0]
         return true if test_result === true
         render_api_error!(test_result[:user_message], test_result[:status], test_result[:log_message], test_result[:javascript_console_message])
-      end
-
-      def verify_recaptcha_v1(remote_ip, private_key, api_recaptcha_verify_uri, recaptcha_challenge_field, recaptcha_response_field)
-        if recaptcha_challenge_field == nil || recaptcha_response_field == nil
-          return render_api_error!(_('Captcha validation error'), 500, nil, _('Missing captcha data'))
-        end
-
-        verify_hash = {
-            "privatekey"  => private_key,
-            "remoteip"    => remote_ip,
-            "challenge"   => recaptcha_challenge_field,
-            "response"    => recaptcha_response_field
-        }
-        uri = URI(api_recaptcha_verify_uri)
-        https = Net::HTTP.new(uri.host, uri.port)
-        https.use_ssl = true
-        request = Net::HTTP::Post.new(uri.path)
-        request.set_form_data(verify_hash)
-        begin
-          result = https.request(request).body.split("\n")
-        rescue Exception => e
-          return render_api_error!(_('Internal captcha validation error'), 500, nil, "Error validating Googles' recaptcha version 1: #{e.message}")
-        end
-        return true if result[0] == "true"
-        return render_api_error!(_("Wrong captcha text, please try again"), 403, nil, "Error validating Googles' recaptcha version 1: #{result[1]}") if result[1] == "incorrect-captcha-sol"
-        #Catches all errors at the end
-        return render_api_error!(_("Internal recaptcha validation error"), 500, nil, "Error validating Googles' recaptcha version 1: #{result[1]}")
-      end
-
-      def verify_recaptcha_v2(remote_ip, private_key, api_recaptcha_verify_uri, g_recaptcha_response)
-        return render_api_error!(_('Captcha validation error'), 500, nil, _('Missing captcha data')) if g_recaptcha_response == nil
-        verify_hash = {
-            "secret"    => private_key,
-            "remoteip"  => remote_ip,
-            "response"  => g_recaptcha_response
-        }
-        uri = URI(api_recaptcha_verify_uri)
-        https = Net::HTTP.new(uri.host, uri.port)
-        https.use_ssl = true
-        request = Net::HTTP::Post.new(uri.path)
-        request.set_form_data(verify_hash)
-        begin
-          body = https.request(request).body
-        rescue Exception => e
-          return render_api_error!(_('Internal captcha validation error'), 500, nil, "recaptcha error: #{e.message}")
-        end
-        captcha_result = JSON.parse(body)
-        captcha_result["success"] ? true : captcha_result
-      end
-
-      def verify_serpro_captcha(client_id, token, captcha_text, verify_uri)
-        return render_api_error!(_("Error processing token validation"), 500, nil, "Missing Serpro's Captcha token") unless token
-        return render_api_error!(_('Captcha text has not been filled'), 403) unless captcha_text
-        uri = URI(verify_uri)
-        http = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Post.new(uri.path)
-        verify_string = "#{client_id}&#{token}&#{captcha_text}"
-        request.body = verify_string
-        begin
-          body = http.request(request).body
-        rescue Exception => e
-          return render_api_error!(_('Internal captcha validation error'), 500, nil, "Serpro captcha error: #{e.message}")
-        end
-        return true if body == '1'
-        return render_api_error!(_("Internal captcha validation error"), 500, body, "Unable to reach Serpro's Captcha validation service") if body == "Activity timed out"
-        return render_api_error!(_("Wrong captcha text, please try again"), 403) if body == 0
-        return render_api_error!(_("Serpro's captcha token not found"), 500) if body == 2
-        return render_api_error!(_("No data sent to validation server or other serious problem"), 500) if body == -1
-        #Catches all errors at the end
-        return render_api_error!(_("Internal captcha validation error"), 500, nil, "Error validating Serpro's captcha #{body}")
       end
 
     end
