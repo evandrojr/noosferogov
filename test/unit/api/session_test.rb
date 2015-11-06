@@ -4,6 +4,7 @@ class SessionTest < ActiveSupport::TestCase
 
   def setup
     login_api
+    OutcomeCaptcha.outcome_captcha_test = true
   end
 
   should 'generate private token when login' do
@@ -76,34 +77,18 @@ class SessionTest < ActiveSupport::TestCase
   end
 
   should 'not register a user without email' do
-    #binding.pry
     params = {:login => "newuserapi", :password => "newuserapi", :password_confirmation => "newuserapi", :email => nil }
     post "/api/v1/register?#{params.to_query}"
     assert_equal 400, last_response.status
   end
 
   should 'not register a duplicated user' do
+    # binding.pry
     params = {:login => "newuserapi", :password => "newuserapi", :password_confirmation => "newuserapi", :email => "newuserapi@email.com" }
     post "/api/v1/register?#{params.to_query}"
     post "/api/v1/register?#{params.to_query}"
     assert_equal 400, last_response.status
     json = JSON.parse(last_response.body)
-  end
-
-  should 'detected error, Name or service not known, for Serpro captcha communication' do
-    environment = Environment.default
-    environment.api_captcha_settings = {
-        enabled: true,
-        provider: 'serpro',
-        serpro_client_id:  '0000000000000000',
-        verify_uri:  'http://someserverthatdoesnotexist.mycompanythatdoesnotexist.com/validate',
-    }
-    environment.save!
-    params = {:login => "newuserapi", :password => "newuserapi", :password_confirmation => "newuserapi", :email => "newuserapi@email.com",
-              :txtToken_captcha_serpro_gov_br => '4324343', :captcha_text => '4030320'}
-    post "/api/v1/register?#{params.to_query}"
-    message = JSON.parse(last_response.body)['javascript_console_message']
-    assert_equal "Serpro captcha error: getaddrinfo: Name or service not known", message
   end
 
   # TODO: Add another test cases to check register situations
@@ -199,6 +184,14 @@ class SessionTest < ActiveSupport::TestCase
     params = {:code => "wrongcode", :password => 'secret', :password_confirmation => 'secret'}
     patch "/api/v1/new_password?#{params.to_query}"
     assert_equal 404, last_response.status
+  end
+
+  should 'do not register a user if captcha fails' do
+    OutcomeCaptcha.outcome_captcha_test = false
+    Environment.default.enable('skip_new_user_email_confirmation')
+    params = {:login => "newuserapi_ewa ", :password => "newuserapi", :password_confirmation => "newuserapi", :email => "newuserapi@email.com" }
+    post "/api/v1/register?#{params.to_query}"
+    assert_equal 403, last_response.status
   end
 
 end

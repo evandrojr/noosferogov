@@ -90,7 +90,6 @@ class SerproCaptchaVerificationTest < ActiveSupport::TestCase
   end
 
   should 'perform a vote on an article identified by id' do
-    binding.pry
     login_with_captcha
     article = create_article('Article 1')
     params = {}

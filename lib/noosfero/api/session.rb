@@ -59,6 +59,7 @@ module Noosfero
         #requires :password_confirmation, type: String, desc: _("Password confirmation")
       end
       post "/register" do
+        # binding.pry
         attrs = attributes_for_keys [:email, :login, :password, :password_confirmation] + environment.signup_person_fields
         remote_ip = (request.respond_to?(:remote_ip) && request.remote_ip) || (env && env['REMOTE_ADDR'])
         # test_captcha will render_api_error! and exit in case of any problem

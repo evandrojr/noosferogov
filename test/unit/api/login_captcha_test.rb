@@ -3,20 +3,20 @@ require File.dirname(__FILE__) + '/test_helper'
 class LoginCaptchaTest < ActiveSupport::TestCase
 
   def setup()
-    @environment = Environment.default
-    @environment.api_captcha_settings = {
-        enabled: true,
-        provider: 'serpro',
-        serpro_client_id:  '0000000000000000',
-        verify_uri:  'http://captcha.serpro.gov.br/validate',
-    }
-    @environment.save!
-  	@url = "/api/v1/login-captcha?"
+    # @environment = Environment.default
+    # @environment.api_captcha_settings = {
+    #     enabled: true,
+    #     provider: 'serpro',
+    #     serpro_client_id:  '0000000000000000',
+    #     verify_uri:  'http://captcha.serpro.gov.br/validate',
+    # }
+    # @environment.save!
+  	# @url = "/api/v1/login-captcha?"
   end
 
   def create_article(name)
     person = fast_create(Person, :environment_id => @environment.id)
-    fast_create(Article, :profile_id => person.id, :name => name)    
+    fast_create(Article, :profile_id => person.id, :name => name)
   end
 
   should 'not perform a vote without authentication' do
@@ -42,7 +42,7 @@ class LoginCaptchaTest < ActiveSupport::TestCase
 
     post "/api/v1/articles/#{article.id}/vote?#{params.to_query}"
     json = JSON.parse(last_response.body)
-    
+
     assert_not_equal 401, last_response.status
     assert_equal true, json['vote']
   end
@@ -88,6 +88,11 @@ class LoginCaptchaTest < ActiveSupport::TestCase
     ret = json["private_token"]
     assert !ret.blank?
     assert ret == @private_token
+  end
+
+  should 'do login captcha from api' do
+    pry
+    do_login_captcha_from_api
   end
 
 end

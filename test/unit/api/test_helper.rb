@@ -1,8 +1,28 @@
 require File.dirname(__FILE__) + '/../../test_helper'
+require File.join(Rails.root, '/lib/noosfero/api/helpers.rb')
+
+class OutcomeCaptcha
+  class << self
+    attr_accessor :outcome_captcha_test
+  end
+  @outcome_captcha_test = true
+end
+
+module Noosfero
+  module API
+    module APIHelpers
+      def test_captcha(*args)
+        return true if OutcomeCaptcha.outcome_captcha_test
+        render_api_error!("Error testing captcha", 403)
+      end
+    end
+  end
+end
 
 class ActiveSupport::TestCase
 
   include Rack::Test::Methods
+  include Noosfero::API::APIHelpers
 
   def app
     Noosfero::API::API
@@ -16,7 +36,8 @@ class ActiveSupport::TestCase
   end
 
   def do_login_captcha_from_api
-    JSON.parse("1")
+    #JSON.parse("")
+    "sasadasdaasdasdadadsadassadas"
   end
 
   def login_api

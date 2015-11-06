@@ -412,10 +412,6 @@ require 'grape'
       #              captcha_helpers           #
       ##########################################
 
-      # def plugins
-      #   @plugins
-      # end
-
       def test_captcha(remote_ip, params, environment)
         captcha_plugin_enabled = @plugins.dispatch(:test_captcha, remote_ip, params, environment)
         return true if captcha_plugin_enabled.size == 0
