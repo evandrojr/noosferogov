@@ -3,15 +3,7 @@ require File.dirname(__FILE__) + '/test_helper'
 class LoginCaptchaTest < ActiveSupport::TestCase
 
   def setup()
-    # @environment = Environment.default
-    # @environment.api_captcha_settings = {
-    #     enabled: true,
-    #     provider: 'serpro',
-    #     serpro_client_id:  '0000000000000000',
-    #     verify_uri:  'http://captcha.serpro.gov.br/validate',
-    # }
-    # @environment.save!
-  	# @url = "/api/v1/login-captcha?"
+    OutcomeCaptcha.outcome_captcha_test = true
   end
 
   def create_article(name)
@@ -91,7 +83,6 @@ class LoginCaptchaTest < ActiveSupport::TestCase
   end
 
   should 'do login captcha from api' do
-    pry
     do_login_captcha_from_api
   end
 
