@@ -3,12 +3,8 @@ require File.dirname(__FILE__) + '/test_helper'
 class LoginCaptchaTest < ActiveSupport::TestCase
 
   def setup()
+    @url = "/api/v1/login-captcha"
     OutcomeCaptcha.outcome_captcha_test = true
-  end
-
-  def create_article(name)
-    person = fast_create(Person, :environment_id => @environment.id)
-    fast_create(Article, :profile_id => person.id, :name => name)
   end
 
   should 'not perform a vote without authentication' do
@@ -25,7 +21,6 @@ class LoginCaptchaTest < ActiveSupport::TestCase
     login_with_captcha
     assert_not_nil @private_token
   end
-
 
   should 'perform a vote in an article identified by id' do
     login_with_captcha
@@ -69,9 +64,11 @@ class LoginCaptchaTest < ActiveSupport::TestCase
   end
 
   should 'not generate private token when login without captcha' do
+    OutcomeCaptcha.outcome_captcha_test = false
     params = {}
     post "#{@url}#{params.to_query}"
     json = JSON.parse(last_response.body)
+    assert_equal last_response.status, 403
     assert json["private_token"].blank?
   end
 

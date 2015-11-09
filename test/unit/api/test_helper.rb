@@ -36,8 +36,15 @@ class ActiveSupport::TestCase
   end
 
   def do_login_captcha_from_api
-    #JSON.parse("")
-    "sasadasdaasdasdadadsadassadas"
+    post "/api/v1/login-captcha"
+    json = JSON.parse(last_response.body)
+    json
+  end
+
+  def create_article(name)
+    @environment = Environment.default
+    person = fast_create(Person, :environment_id => @environment.id)
+    fast_create(Article, :profile_id => person.id, :name => name)
   end
 
   def login_api
