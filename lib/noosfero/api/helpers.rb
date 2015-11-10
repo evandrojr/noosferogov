@@ -22,6 +22,7 @@ require 'grape'
       end
 
       def current_tmp_user
+        binding.pry
         private_token = (params[PRIVATE_TOKEN_PARAM] || headers['Private-Token']).to_s
         ## Get the "captcha" session store
         @current_tmp_user = Noosfero::API::SessionStore.get("captcha##{private_token}")
