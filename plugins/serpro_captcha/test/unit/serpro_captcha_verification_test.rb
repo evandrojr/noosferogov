@@ -90,7 +90,6 @@ class SerproCaptchaVerificationTest < ActiveSupport::TestCase
   end
 
   should 'perform a vote on an article identified by id' do
-    binding.pry
     pass_captcha @environment.serpro_captcha_verify_uri, @captcha_verification_body
     params = {}
     params[:txtToken_captcha_serpro_gov_br]= @captcha_token

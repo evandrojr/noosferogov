@@ -83,7 +83,6 @@ class SessionTest < ActiveSupport::TestCase
   end
 
   should 'not register a duplicated user' do
-    # binding.pry
     params = {:login => "newuserapi", :password => "newuserapi", :password_confirmation => "newuserapi", :email => "newuserapi@email.com" }
     post "/api/v1/register?#{params.to_query}"
     post "/api/v1/register?#{params.to_query}"
