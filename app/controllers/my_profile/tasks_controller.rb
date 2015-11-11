@@ -18,6 +18,14 @@ class TasksController < MyProfileController
     @responsible_candidates = profile.members.by_role(profile.roles.reject {|r| !r.has_permission?('perform_task')}) if profile.organization?
 
     @view_only = !current_person.has_permission?(:perform_task, profile)
+
+    @params_tags = []
+    params.each do |key,value|
+      if key =~ /filter_/ && value
+        @params_tags << view_context.hidden_field_tag(key, value)
+      end
+    end
+    
   end
 
   def processed

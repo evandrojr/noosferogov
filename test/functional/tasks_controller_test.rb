@@ -12,7 +12,7 @@ class TasksControllerTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
 
-    self.profile = create_user('testuser').person
+    self.profile = create_user('testuser', :email => 'testuser@email.com').person
     @controller.stubs(:profile).returns(profile)
     login_as 'testuser'
   end
@@ -77,7 +77,12 @@ class TasksControllerTest < ActionController::TestCase
   end
 
   should 'keep filters after close a task' do
-    t = profile.tasks.build; t.save!
+    requestor =  User.create!(:login => 'john', :email => 'john@example.com', :password => 'test', :password_confirmation => 'test')
+    c = Community.create!(:name => 'test comm', :identifier => 'test_comm', :moderated_articles => false)
+    t = InviteMember.create!(:requestor => requestor.person, :target => profile, :spam => false, :community_id => c.id)
+
+    get :index, :filter_type => t.type
+    assert_tag_in_string(assigns(:params_tags).join(' '), :tag => 'input', :attributes => { :value => 'InviteMember' })
 
     post :close, :tasks => {t.id => {:decision => 'finish', :task => {}}}, :filter_type => t.type
     assert_redirected_to :action => 'index', :filter_type => t.type
