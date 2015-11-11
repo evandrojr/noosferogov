@@ -90,14 +90,19 @@ class SerproCaptchaVerificationTest < ActiveSupport::TestCase
   end
 
   should 'perform a vote on an article identified by id' do
-    login_with_captcha
+    binding.pry
+    pass_captcha @environment.serpro_captcha_verify_uri, @captcha_verification_body
+    params = {}
+    params[:txtToken_captcha_serpro_gov_br]= @captcha_token
+    params[:captcha_text]= @captcha_text
+    post "/api/v1/login-captcha?#{params.to_query}"
+    json = JSON.parse(last_response.body)
     article = create_article('Article 1')
     params = {}
+    params[:private_token] = json['private_token']
     params[:value] = 1
-
     post "/api/v1/articles/#{article.id}/vote?#{params.to_query}"
     json = JSON.parse(last_response.body)
-
     assert_not_equal 401, last_response.status
     assert_equal true, json['vote']
   end
