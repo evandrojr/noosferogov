@@ -33,4 +33,4 @@
 	url = https://softwarepublico.gov.br/gitlab/noosfero-apps/proposal-app.git
 [submodule "plugins/serpro_captcha"]
 	path = plugins/serpro_captcha
-	url = https://softwarepublico.gov.br/gitlab/noosfero-plugins/serpro_captcha.git
+	url = git@softwarepublico.gov.br:noosfero-plugins/serpro_captcha.git
