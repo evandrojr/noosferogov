@@ -671,6 +671,11 @@ class Noosfero::Plugin
     nil
   end
 
+  #By default will return nil that will mean not implented by the plugin
+  def test_captcha(*args)
+    nil
+  end
+
   # -> Adds additional blocks to profiles and environments.
   # Your plugin must implements a class method called 'extra_blocks'
   # that returns a hash with the following syntax.

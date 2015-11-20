@@ -23,13 +23,14 @@ require 'grape'
 
       def current_tmp_user
         private_token = (params[PRIVATE_TOKEN_PARAM] || headers['Private-Token']).to_s
-        @current_tmp_user = Noosfero::API::CaptchaSessionStore.get(private_token)
+        ## Get the "captcha" session store
+        @current_tmp_user = Noosfero::API::SessionStore.get("captcha##{private_token}")
         @current_tmp_user
       end
 
       def logout_tmp_user
         @current_tmp_user = nil
-      end      
+      end
 
       def current_user
         private_token = (params[PRIVATE_TOKEN_PARAM] || headers['Private-Token']).to_s
@@ -273,7 +274,7 @@ require 'grape'
         unauthorized! unless current_user
       end
 
-      # Allows the anonymous captcha user authentication 
+      # Allows the anonymous captcha user authentication
       # to pass the check. Used by the articles/vote to allow
       # the vote without login
       def authenticate_allow_captcha!
@@ -411,99 +412,14 @@ require 'grape'
       ##########################################
 
       def test_captcha(remote_ip, params, environment)
-        d = environment.api_captcha_settings
-        return true unless d[:enabled] == true
-        msg_icve = _('Internal captcha validation error')
-        msg_eacs = 'Environment api_captcha_settings'
-        s = 500
-
-        if d[:provider] == 'google'
-          return render_api_error!(msg_icve, s, nil, "#{msg_eacs} private_key not defined") if d[:private_key].nil?
-          return render_api_error!(msg_icve, s, nil, "#{msg_eacs} version not defined") unless d[:version] == 1 || d[:version] == 2
-          if d[:version]  == 1
-            d[:verify_uri] ||= 'https://www.google.com/recaptcha/api/verify'
-            return verify_recaptcha_v1(remote_ip, d[:private_key], d[:verify_uri], params[:recaptcha_challenge_field], params[:recaptcha_response_field])
-          end
-          if d[:version] == 2
-            d[:verify_uri] ||= 'https://www.google.com/recaptcha/api/siteverify'
-            return verify_recaptcha_v2(remote_ip, d[:private_key], d[:verify_uri], params[:g_recaptcha_response])
-          end
+        captcha_plugin_enabled = @plugins.dispatch(:test_captcha, remote_ip, params, environment).map {|p| p if ! ( p===nil ) }
+        return true if captcha_plugin_enabled.size == 0
+        if captcha_plugin_enabled.size > 1
+          return render_api_error!(_("Error processing Captcha"), 500, nil, "More than one captcha plugin enabled")
         end
-        if d[:provider] == 'serpro'
-          return render_api_error!(msg_icve, s, nil, "#{msg_eacs} verify_uri not defined") if d[:verify_uri].nil?
-          return verify_serpro_captcha(d[:serpro_client_id], params[:txtToken_captcha_serpro_gov_br], params[:captcha_text], d[:verify_uri])
-        end
-        return render_api_error!(msg_icve, s, nil, "#{msg_eacs} provider not defined")
-      end
-
-      def verify_recaptcha_v1(remote_ip, private_key, api_recaptcha_verify_uri, recaptcha_challenge_field, recaptcha_response_field)
-        if recaptcha_challenge_field == nil || recaptcha_response_field == nil
-          return render_api_error!(_('Captcha validation error'), 500, nil, _('Missing captcha data'))
-        end
-
-        verify_hash = {
-            "privatekey"  => private_key,
-            "remoteip"    => remote_ip,
-            "challenge"   => recaptcha_challenge_field,
-            "response"    => recaptcha_response_field
-        }
-        uri = URI(api_recaptcha_verify_uri)
-        https = Net::HTTP.new(uri.host, uri.port)
-        https.use_ssl = true
-        request = Net::HTTP::Post.new(uri.path)
-        request.set_form_data(verify_hash)
-        begin
-          result = https.request(request).body.split("\n")
-        rescue Exception => e
-          return render_api_error!(_('Internal captcha validation error'), 500, nil, "Error validating Googles' recaptcha version 1: #{e.message}")
-        end
-        return true if result[0] == "true"
-        return render_api_error!(_("Wrong captcha text, please try again"), 403, nil, "Error validating Googles' recaptcha version 1: #{result[1]}") if result[1] == "incorrect-captcha-sol"
-        #Catches all errors at the end
-        return render_api_error!(_("Internal recaptcha validation error"), 500, nil, "Error validating Googles' recaptcha version 1: #{result[1]}")
-      end
-
-      def verify_recaptcha_v2(remote_ip, private_key, api_recaptcha_verify_uri, g_recaptcha_response)
-        return render_api_error!(_('Captcha validation error'), 500, nil, _('Missing captcha data')) if g_recaptcha_response == nil
-        verify_hash = {
-            "secret"    => private_key,
-            "remoteip"  => remote_ip,
-            "response"  => g_recaptcha_response
-        }
-        uri = URI(api_recaptcha_verify_uri)
-        https = Net::HTTP.new(uri.host, uri.port)
-        https.use_ssl = true
-        request = Net::HTTP::Post.new(uri.path)
-        request.set_form_data(verify_hash)
-        begin
-          body = https.request(request).body
-        rescue Exception => e
-          return render_api_error!(_('Internal captcha validation error'), 500, nil, "recaptcha error: #{e.message}")
-        end
-        captcha_result = JSON.parse(body)
-        captcha_result["success"] ? true : captcha_result
-      end
-
-      def verify_serpro_captcha(client_id, token, captcha_text, verify_uri)
-        return render_api_error!(_("Error processing token validation"), 500, nil, "Missing Serpro's Captcha token") unless token
-        return render_api_error!(_('Captcha text has not been filled'), 403) unless captcha_text
-        uri = URI(verify_uri)
-        http = Net::HTTP.new(uri.host, uri.port)
-        request = Net::HTTP::Post.new(uri.path)
-        verify_string = "#{client_id}&#{token}&#{captcha_text}"
-        request.body = verify_string
-        begin
-          body = http.request(request).body
-        rescue Exception => e
-          return render_api_error!(_('Internal captcha validation error'), 500, nil, "Serpro captcha error: #{e.message}")
-        end
-        return true if body == '1'
-        return render_api_error!(_("Internal captcha validation error"), 500, body, "Unable to reach Serpro's Captcha validation service") if body == "Activity timed out"
-        return render_api_error!(_("Wrong captcha text, please try again"), 403) if body == 0
-        return render_api_error!(_("Serpro's captcha token not found"), 500) if body == 2
-        return render_api_error!(_("No data sent to validation server or other serious problem"), 500) if body == -1
-        #Catches all errors at the end
-        return render_api_error!(_("Internal captcha validation error"), 500, nil, "Error validating Serpro's captcha #{body}")
+        test_result = captcha_plugin_enabled[0]
+        return true if test_result === true
+        render_api_error!(test_result[:user_message], test_result[:status], test_result[:log_message], test_result[:javascript_console_message])
       end
 
     end

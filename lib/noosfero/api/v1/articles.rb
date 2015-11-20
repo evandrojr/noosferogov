@@ -149,13 +149,24 @@ module Noosfero
             # FIXME verify allowed values
             render_api_error!('Vote value not allowed', 400) unless [-1, 1].include?(value)
             article = find_article(environment.articles, params[:id])
-
-            begin
+            ## If login with captcha
+            if @current_tmp_user
+              vote = (@current_tmp_user.data.include? article.id) ? false : true
+              if vote
+                @current_tmp_user.data << article.id
+                @current_tmp_user.store
+				begin
+	              vote = Vote.new(:voteable => article, :voter => current_person, :vote => value)
+	              {:vote => vote.save}
+				rescue ActiveRecord::RecordInvalid => e
+	              render_api_error!(e.message, 400)
+	            end
+              else
+                {:vote => false}
+              end
+            else
               vote = Vote.new(:voteable => article, :voter => current_person, :vote => value)
-              saved = vote.save!
-              {:vote => saved}
-            rescue ActiveRecord::RecordInvalid => e
-              render_api_error!(e.message, 400)
+              {:vote => vote.save}
             end
           end
 
