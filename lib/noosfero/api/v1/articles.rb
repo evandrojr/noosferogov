@@ -131,9 +131,8 @@ module Noosfero
             failure [[403, 'Forbidden']]
             named 'ArticleFollowers'
           end
-
-           #FIXME refactor this method
           get 'voted_by_me' do
+            #FIXME refactor this method
             present_articles_paginated(current_person.votes.where(:voteable_type => 'Article').collect(&:voteable))
           end
 
@@ -156,8 +155,12 @@ module Noosfero
               if vote
                 @current_tmp_user.data << article.id
                 @current_tmp_user.store
-                vote = Vote.new(:voteable => article, :voter => current_person, :vote => value)
-                {:vote => vote.save}
+        				begin
+  	              vote = Vote.new(:voteable => article, :voter => current_person, :vote => value)
+  	              {:vote => vote.save}
+        				rescue ActiveRecord::RecordInvalid => e
+  	              render_api_error!(e.message, 400)
+        	      end
               else
                 {:vote => false}
               end
