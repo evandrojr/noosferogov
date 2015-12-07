@@ -139,6 +139,10 @@ class APIHelpersTest < ActiveSupport::TestCase
     assert_not_nil make_conditions_with_parameter('until' => '2010-10-10')[:created_at]
   end
 
+  should 'make_conditions_with_parameter return archived parameter if archived was defined' do
+    assert_not_nil make_conditions_with_parameter('archived' => true)[:archived]
+  end
+
   should 'make_conditions_with_parameter return created_at as the first existent date as parameter if only until is defined' do
     assert_equal Time.at(0).to_datetime, make_conditions_with_parameter(:until => '2010-10-10')[:created_at].min
   end
@@ -217,15 +221,15 @@ class APIHelpersTest < ActiveSupport::TestCase
 
 ###### Captcha tests ######
 
-# def plugins
-#   environment = Environment.default
-#   Noosfero::Plugin::Manager.new(environment, self)
-# end
-#
-# should 'do not test captcha when there is no captcha plugin enabled' do
-#   environment = Environment.new
-#   assert test_captcha("127.0.0.1", {}, environment)
-# end
+ def plugins
+   environment = Environment.default
+   Noosfero::Plugin::Manager.new(environment, self)
+ end
+
+ should 'do not test captcha when there is no captcha plugin enabled' do
+   environment = Environment.new
+   assert test_captcha("127.0.0.1", {}, environment)
+ end
 
 ###### END Captcha tests ######
 
