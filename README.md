@@ -11,7 +11,7 @@ Documentation
 The following documentation is available:
 
     File                     Purpose
-    -----------------------  --------------------------------------------------------
+    -----------------------  ----------------------------------------
     INSTALL.md               install instructions
     INSTALL.awstats.md       install instructions - access statistics service
     INSTALL.chat.md          install instructions - chat service
