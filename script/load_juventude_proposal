@@ -15,11 +15,12 @@ CSV.foreach(filepath, {:col_sep => ';', :force_quotes => true}) do |row|
   next if proposal_body.nil?
   topic_name = topic_name.chomp
   proposal_body = proposal_body.chomp
-#puts topic_name.inspect
-#puts proposal_body.inspect
+puts count.inspect
+puts topic_name.inspect
+puts proposal_body.inspect
   topic = ProposalsDiscussionPlugin::Topic.find_by_slug(topic_name) if topic.nil? || topic.name != topic_name
 
-#puts topic.inspect
+puts topic.inspect
 
   proposal = ProposalsDiscussionPlugin::Proposal.new
   proposal.author = author
