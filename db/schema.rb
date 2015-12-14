@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150918005035) do
+ActiveRecord::Schema.define(:version => 20151105175319) do
 
   create_table "abuse_reports", :force => true do |t|
     t.integer  "reporter_id"
@@ -24,15 +24,15 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
 
   create_table "action_tracker", :force => true do |t|
     t.integer  "user_id"
-    t.string   "user_type"
+    t.string   "user_type",      :limit => nil
     t.integer  "target_id"
-    t.string   "target_type"
+    t.string   "target_type",    :limit => nil
     t.text     "params"
-    t.string   "verb"
+    t.string   "verb",           :limit => nil
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "comments_count", :default => 0
-    t.boolean  "visible",        :default => true
+    t.integer  "comments_count",                :default => 0
+    t.boolean  "visible",                       :default => true
   end
 
   add_index "action_tracker", ["target_id", "target_type"], :name => "index_action_tracker_on_dispatcher_id_and_dispatcher_type"
@@ -52,8 +52,8 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
     t.integer  "person_id",  :null => false
     t.integer  "article_id", :null => false
     t.datetime "since"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "article_followers", ["article_id"], :name => "index_article_followers_on_article_id"
@@ -68,9 +68,9 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   create_table "article_versions", :force => true do |t|
     t.integer  "article_id"
     t.integer  "version"
-    t.string   "name"
-    t.string   "slug"
-    t.text     "path",                 :default => ""
+    t.string   "name",                 :limit => nil
+    t.string   "slug",                 :limit => nil
+    t.text     "path",                                :default => ""
     t.integer  "parent_id"
     t.text     "body"
     t.text     "abstract"
@@ -79,35 +79,35 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
     t.datetime "created_at"
     t.integer  "last_changed_by_id"
     t.integer  "size"
-    t.string   "content_type"
-    t.string   "filename"
+    t.string   "content_type",         :limit => nil
+    t.string   "filename",             :limit => nil
     t.integer  "height"
     t.integer  "width"
-    t.string   "versioned_type"
+    t.string   "versioned_type",       :limit => nil
     t.integer  "comments_count"
-    t.boolean  "advertise",            :default => true
-    t.boolean  "published",            :default => true
+    t.boolean  "advertise",                           :default => true
+    t.boolean  "published",                           :default => true
     t.datetime "start_date"
     t.datetime "end_date"
-    t.integer  "children_count",       :default => 0
-    t.boolean  "accept_comments",      :default => true
+    t.integer  "children_count",                      :default => 0
+    t.boolean  "accept_comments",                     :default => true
     t.integer  "reference_article_id"
     t.text     "setting"
-    t.boolean  "notify_comments",      :default => false
-    t.integer  "hits",                 :default => 0
+    t.boolean  "notify_comments",                     :default => false
+    t.integer  "hits",                                :default => 0
     t.datetime "published_at"
-    t.string   "source"
-    t.boolean  "highlighted",          :default => false
-    t.string   "external_link"
-    t.boolean  "thumbnails_processed", :default => false
-    t.boolean  "is_image",             :default => false
+    t.string   "source",               :limit => nil
+    t.boolean  "highlighted",                         :default => false
+    t.string   "external_link",        :limit => nil
+    t.boolean  "thumbnails_processed",                :default => false
+    t.boolean  "is_image",                            :default => false
     t.integer  "translation_of_id"
-    t.string   "language"
-    t.string   "source_name"
+    t.string   "language",             :limit => nil
+    t.string   "source_name",          :limit => nil
     t.integer  "license_id"
     t.integer  "image_id"
     t.integer  "position"
-    t.integer  "spam_comments_count",  :default => 0
+    t.integer  "spam_comments_count",                 :default => 0
     t.integer  "author_id"
     t.integer  "created_by_id"
     t.integer  "followers_count"
@@ -120,9 +120,9 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "article_versions", ["published_at", "id"], :name => "index_article_versions_on_published_at_and_id"
 
   create_table "articles", :force => true do |t|
-    t.string   "name"
-    t.string   "slug"
-    t.text     "path",                 :default => ""
+    t.string   "name",                 :limit => nil
+    t.string   "slug",                 :limit => nil
+    t.text     "path",                                :default => ""
     t.integer  "parent_id"
     t.text     "body"
     t.text     "abstract"
@@ -131,42 +131,42 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
     t.datetime "created_at"
     t.integer  "last_changed_by_id"
     t.integer  "version"
-    t.string   "type"
+    t.string   "type",                 :limit => nil
     t.integer  "size"
-    t.string   "content_type"
-    t.string   "filename"
+    t.string   "content_type",         :limit => nil
+    t.string   "filename",             :limit => nil
     t.integer  "height"
     t.integer  "width"
-    t.integer  "comments_count",       :default => 0
-    t.boolean  "advertise",            :default => true
-    t.boolean  "published",            :default => true
+    t.integer  "comments_count",                      :default => 0
+    t.boolean  "advertise",                           :default => true
+    t.boolean  "published",                           :default => true
     t.datetime "start_date"
     t.datetime "end_date"
-    t.integer  "children_count",       :default => 0
-    t.boolean  "accept_comments",      :default => true
+    t.integer  "children_count",                      :default => 0
+    t.boolean  "accept_comments",                     :default => true
     t.integer  "reference_article_id"
     t.text     "setting"
-    t.boolean  "notify_comments",      :default => true
-    t.integer  "hits",                 :default => 0
+    t.boolean  "notify_comments",                     :default => true
+    t.integer  "hits",                                :default => 0
     t.datetime "published_at"
-    t.string   "source"
-    t.boolean  "highlighted",          :default => false
-    t.string   "external_link"
-    t.boolean  "thumbnails_processed", :default => false
-    t.boolean  "is_image",             :default => false
+    t.string   "source",               :limit => nil
+    t.boolean  "highlighted",                         :default => false
+    t.string   "external_link",        :limit => nil
+    t.boolean  "thumbnails_processed",                :default => false
+    t.boolean  "is_image",                            :default => false
     t.integer  "translation_of_id"
-    t.string   "language"
-    t.string   "source_name"
+    t.string   "language",             :limit => nil
+    t.string   "source_name",          :limit => nil
     t.integer  "license_id"
     t.integer  "image_id"
     t.integer  "position"
-    t.integer  "spam_comments_count",  :default => 0
+    t.integer  "spam_comments_count",                 :default => 0
     t.integer  "author_id"
     t.integer  "created_by_id"
-    t.boolean  "show_to_followers",    :default => true
+    t.boolean  "show_to_followers",                   :default => true
     t.integer  "sash_id"
-    t.integer  "level",                :default => 0
-    t.integer  "followers_count",      :default => 0
+    t.integer  "level",                               :default => 0
+    t.integer  "followers_count",                     :default => 0
   end
 
   add_index "articles", ["comments_count"], :name => "index_articles_on_comments_count"
@@ -205,16 +205,16 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "badges_sashes", ["sash_id"], :name => "index_badges_sashes_on_sash_id"
 
   create_table "blocks", :force => true do |t|
-    t.string   "title"
+    t.string   "title",           :limit => nil
     t.integer  "box_id"
-    t.string   "type"
+    t.string   "type",            :limit => nil
     t.text     "settings"
     t.integer  "position"
-    t.boolean  "enabled",         :default => true
+    t.boolean  "enabled",                        :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "fetched_at"
-    t.boolean  "mirror",          :default => false
+    t.boolean  "mirror",                         :default => false
     t.integer  "mirror_block_id"
     t.integer  "observers_id"
   end
@@ -225,7 +225,7 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "blocks", ["type"], :name => "index_blocks_on_type"
 
   create_table "boxes", :force => true do |t|
-    t.string  "owner_type"
+    t.string  "owner_type", :limit => nil
     t.integer "owner_id"
     t.integer "position"
   end
@@ -233,20 +233,20 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "boxes", ["owner_id", "owner_type"], :name => "index_boxes_on_owner_type_and_owner_id"
 
   create_table "categories", :force => true do |t|
-    t.string  "name"
-    t.string  "slug"
-    t.text    "path",                         :default => ""
+    t.string  "name",            :limit => nil
+    t.string  "slug",            :limit => nil
+    t.text    "path",                           :default => ""
     t.integer "environment_id"
     t.integer "parent_id"
-    t.string  "type"
+    t.string  "type",            :limit => nil
     t.float   "lat"
     t.float   "lng"
-    t.boolean "display_in_menu",              :default => false
-    t.integer "children_count",               :default => 0
-    t.boolean "accept_products",              :default => true
+    t.boolean "display_in_menu",                :default => false
+    t.integer "children_count",                 :default => 0
+    t.boolean "accept_products",                :default => true
     t.integer "image_id"
-    t.string  "acronym"
-    t.string  "abbreviation"
+    t.string  "acronym",         :limit => nil
+    t.string  "abbreviation",    :limit => nil
     t.string  "display_color",   :limit => 6
     t.text    "ancestry"
   end
@@ -263,9 +263,9 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "categories_profiles", ["profile_id"], :name => "index_categories_profiles_on_profile_id"
 
   create_table "certifiers", :force => true do |t|
-    t.string   "name",           :null => false
+    t.string   "name",           :limit => nil, :null => false
     t.text     "description"
-    t.string   "link"
+    t.string   "link",           :limit => nil
     t.integer  "environment_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -284,22 +284,22 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "chat_messages", ["to_id"], :name => "index_chat_messages_on_to_id"
 
   create_table "comments", :force => true do |t|
-    t.string   "title"
+    t.string   "title",          :limit => nil
     t.text     "body"
     t.integer  "source_id"
     t.integer  "author_id"
-    t.string   "name"
-    t.string   "email"
+    t.string   "name",           :limit => nil
+    t.string   "email",          :limit => nil
     t.datetime "created_at"
     t.integer  "reply_of_id"
-    t.string   "ip_address"
+    t.string   "ip_address",     :limit => nil
     t.boolean  "spam"
-    t.string   "source_type"
-    t.string   "user_agent"
-    t.string   "referrer"
+    t.string   "source_type",    :limit => nil
+    t.string   "user_agent",     :limit => nil
+    t.string   "referrer",       :limit => nil
     t.text     "settings"
     t.integer  "paragraph_id"
-    t.string   "paragraph_uuid"
+    t.string   "paragraph_uuid", :limit => nil
   end
 
   add_index "comments", ["paragraph_uuid"], :name => "index_comments_on_paragraph_uuid"
@@ -307,34 +307,62 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
 
   create_table "contact_lists", :force => true do |t|
     t.text     "list"
-    t.string   "error_fetching"
-    t.boolean  "fetched",        :default => false
+    t.string   "error_fetching", :limit => nil
+    t.boolean  "fetched",                       :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  create_table "custom_field_values", :force => true do |t|
+    t.string   "customized_type", :limit => nil, :default => "",    :null => false
+    t.integer  "customized_id",                  :default => 0,     :null => false
+    t.boolean  "public",                         :default => false, :null => false
+    t.integer  "custom_field_id",                :default => 0,     :null => false
+    t.text     "value",                          :default => ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "custom_field_values", ["customized_type", "customized_id", "custom_field_id"], :name => "index_custom_field_values", :unique => true
+
+  create_table "custom_fields", :force => true do |t|
+    t.string   "name",            :limit => nil
+    t.string   "format",          :limit => nil, :default => ""
+    t.text     "default_value",                  :default => ""
+    t.string   "customized_type", :limit => nil
+    t.text     "extras",                         :default => ""
+    t.boolean  "active",                         :default => false
+    t.boolean  "required",                       :default => false
+    t.boolean  "signup",                         :default => false
+    t.integer  "environment_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "custom_fields", ["customized_type", "name", "environment_id"], :name => "index_custom_field", :unique => true
+
   create_table "delayed_jobs", :force => true do |t|
-    t.integer  "priority",   :default => 0
-    t.integer  "attempts",   :default => 0
+    t.integer  "priority",                  :default => 0
+    t.integer  "attempts",                  :default => 0
     t.text     "handler"
     t.text     "last_error"
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
-    t.string   "locked_by"
+    t.string   "locked_by",  :limit => nil
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "queue"
+    t.string   "queue",      :limit => nil
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "domains", :force => true do |t|
-    t.string  "name"
-    t.string  "owner_type"
+    t.string  "name",            :limit => nil
+    t.string  "owner_type",      :limit => nil
     t.integer "owner_id"
-    t.boolean "is_default",      :default => false
-    t.string  "google_maps_key"
+    t.boolean "is_default",                     :default => false
+    t.string  "google_maps_key", :limit => nil
   end
 
   add_index "domains", ["is_default"], :name => "index_domains_on_is_default"
@@ -354,39 +382,38 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   end
 
   create_table "environments", :force => true do |t|
-    t.string   "name"
-    t.string   "contact_email"
+    t.string   "name",                         :limit => nil
+    t.string   "contact_email",                :limit => nil
     t.boolean  "is_default"
     t.text     "settings"
     t.text     "design_data"
     t.text     "custom_header"
     t.text     "custom_footer"
-    t.string   "theme",                        :default => "default",              :null => false
+    t.string   "theme",                        :limit => nil, :default => "default",              :null => false
     t.text     "terms_of_use_acceptance_text"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "reports_lower_bound",          :default => 0,                      :null => false
-    t.string   "redirection_after_login",      :default => "keep_on_same_page"
+    t.integer  "reports_lower_bound",                         :default => 0,                      :null => false
+    t.string   "redirection_after_login",      :limit => nil, :default => "keep_on_same_page"
     t.text     "signup_welcome_text"
-    t.string   "languages"
-    t.string   "default_language"
-    t.string   "noreply_email"
-    t.string   "redirection_after_signup",     :default => "keep_on_same_page"
-    t.text     "send_email_plugin_allow_to"
-    t.string   "date_format",                  :default => "month_name_with_year"
+    t.string   "languages",                    :limit => nil
+    t.string   "default_language",             :limit => nil
+    t.string   "noreply_email",                :limit => nil
+    t.string   "redirection_after_signup",     :limit => nil, :default => "keep_on_same_page"
+    t.string   "date_format",                  :limit => nil, :default => "month_name_with_year"
   end
 
   create_table "external_feeds", :force => true do |t|
-    t.string   "feed_title"
+    t.string   "feed_title",    :limit => nil
     t.datetime "fetched_at"
     t.text     "address"
-    t.integer  "blog_id",                         :null => false
-    t.boolean  "enabled",       :default => true, :null => false
-    t.boolean  "only_once",     :default => true, :null => false
+    t.integer  "blog_id",                                        :null => false
+    t.boolean  "enabled",                      :default => true, :null => false
+    t.boolean  "only_once",                    :default => true, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "error_message"
-    t.integer  "update_errors", :default => 0
+    t.integer  "update_errors",                :default => 0
   end
 
   add_index "external_feeds", ["blog_id"], :name => "index_external_feeds_on_blog_id"
@@ -408,7 +435,7 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
     t.integer  "person_id"
     t.integer  "friend_id"
     t.datetime "created_at"
-    t.string   "group"
+    t.string   "group",      :limit => nil
   end
 
   add_index "friendships", ["friend_id"], :name => "index_friendships_on_friend_id"
@@ -419,7 +446,7 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
     t.string   "name"
     t.integer  "level"
     t.string   "description"
-    t.string   "custom_fields"
+    t.text     "custom_fields"
     t.integer  "owner_id"
     t.string   "owner_type"
     t.datetime "created_at",    :null => false
@@ -427,16 +454,34 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
     t.string   "title"
   end
 
+  create_table "gamification_plugin_points_categorizations", :force => true do |t|
+    t.integer  "profile_id"
+    t.integer  "point_type_id"
+    t.integer  "weight"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "gamification_plugin_points_categorizations", ["point_type_id"], :name => "index_points_categorizations_on_point_type_id"
+  add_index "gamification_plugin_points_categorizations", ["profile_id"], :name => "index_gamification_plugin_points_categorizations_on_profile_id"
+
+  create_table "gamification_plugin_points_types", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "images", :force => true do |t|
     t.integer "parent_id"
-    t.string  "content_type"
-    t.string  "filename"
-    t.string  "thumbnail"
+    t.string  "content_type",         :limit => nil
+    t.string  "filename",             :limit => nil
+    t.string  "thumbnail",            :limit => nil
     t.integer "size"
     t.integer "width"
     t.integer "height"
-    t.boolean "thumbnails_processed", :default => false
-    t.string  "label",                :default => ""
+    t.boolean "thumbnails_processed",                :default => false
+    t.string  "label",                :limit => nil, :default => ""
   end
 
   add_index "images", ["parent_id"], :name => "index_images_on_parent_id"
@@ -458,10 +503,10 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "inputs", ["product_id"], :name => "index_inputs_on_product_id"
 
   create_table "licenses", :force => true do |t|
-    t.string  "name",           :null => false
-    t.string  "slug",           :null => false
-    t.string  "url"
-    t.integer "environment_id", :null => false
+    t.string  "name",           :limit => nil, :null => false
+    t.string  "slug",           :limit => nil, :null => false
+    t.string  "url",            :limit => nil
+    t.integer "environment_id",                :null => false
   end
 
   create_table "mailing_sents", :force => true do |t|
@@ -472,23 +517,16 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   end
 
   create_table "mailings", :force => true do |t|
-    t.string   "type"
-    t.string   "subject"
+    t.string   "type",        :limit => nil
+    t.string   "subject",     :limit => nil
     t.text     "body"
     t.integer  "source_id"
-    t.string   "source_type"
+    t.string   "source_type", :limit => nil
     t.integer  "person_id"
-    t.string   "locale"
+    t.string   "locale",      :limit => nil
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "mark_comment_as_read_plugin", :force => true do |t|
-    t.integer "comment_id"
-    t.integer "person_id"
-  end
-
-  add_index "mark_comment_as_read_plugin", ["comment_id", "person_id"], :name => "index_mark_comment_as_read_plugin_on_comment_id_and_person_id", :unique => true
 
   create_table "merit_actions", :force => true do |t|
     t.integer  "user_id"
@@ -525,13 +563,13 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   end
 
   create_table "national_region_types", :force => true do |t|
-    t.string "name"
+    t.string "name", :limit => nil
   end
 
   create_table "national_regions", :force => true do |t|
-    t.string   "name"
-    t.string   "national_region_code"
-    t.string   "parent_national_region_code"
+    t.string   "name",                        :limit => nil
+    t.string   "national_region_code",        :limit => nil
+    t.string   "parent_national_region_code", :limit => nil
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "national_region_type_id"
@@ -539,15 +577,6 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
 
   add_index "national_regions", ["name"], :name => "name_index"
   add_index "national_regions", ["national_region_code"], :name => "code_index"
-
-  create_table "pairwise_plugin_choices_related", :force => true do |t|
-    t.integer  "choice_id"
-    t.integer  "parent_choice_id"
-    t.integer  "question_id"
-    t.integer  "user_id"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
-  end
 
   create_table "price_details", :force => true do |t|
     t.decimal  "price",              :default => 0.0
@@ -570,9 +599,9 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "product_qualifiers", ["qualifier_id"], :name => "index_product_qualifiers_on_qualifier_id"
 
   create_table "production_costs", :force => true do |t|
-    t.string   "name"
+    t.string   "name",       :limit => nil
     t.integer  "owner_id"
-    t.string   "owner_type"
+    t.string   "owner_type", :limit => nil
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -580,19 +609,19 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   create_table "products", :force => true do |t|
     t.integer  "profile_id"
     t.integer  "product_category_id"
-    t.string   "name"
+    t.string   "name",                :limit => nil
     t.decimal  "price"
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.decimal  "discount"
-    t.boolean  "available",           :default => true
-    t.boolean  "highlighted",         :default => false
+    t.boolean  "available",                          :default => true
+    t.boolean  "highlighted",                        :default => false
     t.integer  "unit_id"
     t.integer  "image_id"
-    t.string   "type"
+    t.string   "type",                :limit => nil
     t.text     "data"
-    t.boolean  "archived",            :default => false
+    t.boolean  "archived",                           :default => false
   end
 
   add_index "products", ["created_at"], :name => "index_products_on_created_at"
@@ -602,9 +631,9 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   create_table "profile_activities", :force => true do |t|
     t.integer  "profile_id"
     t.integer  "activity_id"
-    t.string   "activity_type"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.string   "activity_type", :limit => nil
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
   end
 
   add_index "profile_activities", ["activity_id", "activity_type"], :name => "index_profile_activities_on_activity_id_and_activity_type"
@@ -614,12 +643,12 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   create_table "profile_suggestions", :force => true do |t|
     t.integer  "person_id"
     t.integer  "suggestion_id"
-    t.string   "suggestion_type"
+    t.string   "suggestion_type", :limit => nil
     t.text     "categories"
-    t.boolean  "enabled",         :default => true
-    t.float    "score",           :default => 0.0
-    t.datetime "created_at",                        :null => false
-    t.datetime "updated_at",                        :null => false
+    t.boolean  "enabled",                        :default => true
+    t.float    "score",                          :default => 0.0
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
   end
 
   add_index "profile_suggestions", ["person_id"], :name => "index_profile_suggestions_on_person_id"
@@ -627,13 +656,13 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "profile_suggestions", ["suggestion_id"], :name => "index_profile_suggestions_on_suggestion_id"
 
   create_table "profiles", :force => true do |t|
-    t.string   "name"
-    t.string   "type"
-    t.string   "identifier"
+    t.string   "name",                    :limit => nil
+    t.string   "type",                    :limit => nil
+    t.string   "identifier",              :limit => nil
     t.integer  "environment_id"
-    t.boolean  "active",                                :default => true
-    t.string   "address"
-    t.string   "contact_phone"
+    t.boolean  "active",                                 :default => true
+    t.string   "address",                 :limit => nil
+    t.string   "contact_phone",           :limit => nil
     t.integer  "home_page_id"
     t.integer  "user_id"
     t.integer  "region_id"
@@ -642,49 +671,45 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
     t.float    "lat"
     t.float    "lng"
     t.integer  "geocode_precision"
-    t.boolean  "enabled",                               :default => true
+    t.boolean  "enabled",                                :default => true
     t.string   "nickname",                :limit => 16
     t.text     "custom_header"
     t.text     "custom_footer"
-    t.string   "theme"
-    t.boolean  "public_profile",                        :default => true
+    t.string   "theme",                   :limit => nil
+    t.boolean  "public_profile",                         :default => true
     t.date     "birth_date"
     t.integer  "preferred_domain_id"
     t.datetime "updated_at"
-    t.boolean  "visible",                               :default => true
+    t.boolean  "visible",                                :default => true
     t.integer  "image_id"
-    t.boolean  "validated",                             :default => true
-    t.string   "cnpj"
-    t.string   "national_region_code"
-    t.boolean  "is_template",                           :default => false
+    t.boolean  "validated",                              :default => true
+    t.string   "cnpj",                    :limit => nil
+    t.string   "national_region_code",    :limit => nil
+    t.boolean  "is_template",                            :default => false
     t.integer  "template_id"
-    t.string   "redirection_after_login"
-    t.integer  "friends_count",                         :default => 0,     :null => false
-    t.integer  "members_count",                         :default => 0,     :null => false
-    t.integer  "activities_count",                      :default => 0,     :null => false
-    t.string   "personal_website"
-    t.string   "jabber_id"
+    t.string   "redirection_after_login", :limit => nil
+    t.integer  "friends_count",                          :default => 0,     :null => false
+    t.integer  "members_count",                          :default => 0,     :null => false
+    t.integer  "activities_count",                       :default => 0,     :null => false
+    t.string   "personal_website",        :limit => nil
+    t.string   "jabber_id",               :limit => nil
     t.integer  "welcome_page_id"
-    t.boolean  "allow_members_to_invite",               :default => true
-    t.boolean  "invite_friends_only",                   :default => false
-    t.boolean  "secret",                                :default => false
+    t.boolean  "allow_members_to_invite",                :default => true
+    t.boolean  "invite_friends_only",                    :default => false
+    t.boolean  "secret",                                 :default => false
     t.integer  "sash_id"
-    t.integer  "level",                                 :default => 0
+    t.integer  "level",                                  :default => 0
   end
 
   add_index "profiles", ["activities_count"], :name => "index_profiles_on_activities_count"
   add_index "profiles", ["created_at"], :name => "index_profiles_on_created_at"
-  add_index "profiles", ["enabled"], :name => "index_profiles_on_enabled"
   add_index "profiles", ["environment_id"], :name => "index_profiles_on_environment_id"
   add_index "profiles", ["friends_count"], :name => "index_profiles_on_friends_count"
   add_index "profiles", ["identifier"], :name => "index_profiles_on_identifier"
   add_index "profiles", ["members_count"], :name => "index_profiles_on_members_count"
   add_index "profiles", ["region_id"], :name => "index_profiles_on_region_id"
-  add_index "profiles", ["type"], :name => "index_profiles_on_type"
   add_index "profiles", ["user_id", "type"], :name => "index_profiles_on_user_id_and_type"
   add_index "profiles", ["user_id"], :name => "index_profiles_on_user_id"
-  add_index "profiles", ["validated"], :name => "index_profiles_on_validated"
-  add_index "profiles", ["visible"], :name => "index_profiles_on_visible"
 
   create_table "proposals_discussion_plugin_proposal_evaluations", :force => true do |t|
     t.integer  "proposal_task_id"
@@ -722,7 +747,7 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   end
 
   create_table "qualifiers", :force => true do |t|
-    t.string   "name",           :null => false
+    t.string   "name",           :limit => nil, :null => false
     t.integer  "environment_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -740,32 +765,26 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
 
   create_table "reported_images", :force => true do |t|
     t.integer "size"
-    t.string  "content_type"
-    t.string  "filename"
+    t.string  "content_type",    :limit => nil
+    t.string  "filename",        :limit => nil
     t.integer "height"
     t.integer "width"
     t.integer "abuse_report_id"
   end
 
   create_table "role_assignments", :force => true do |t|
-    t.integer "accessor_id",   :null => false
-    t.string  "accessor_type"
+    t.integer "accessor_id",                  :null => false
+    t.string  "accessor_type", :limit => nil
     t.integer "resource_id"
-    t.string  "resource_type"
-    t.integer "role_id",       :null => false
+    t.string  "resource_type", :limit => nil
+    t.integer "role_id",                      :null => false
     t.boolean "is_global"
   end
 
-  add_index "role_assignments", ["accessor_id", "accessor_type", "resource_id", "resource_type"], :name => "index_on_role_assigments_accessor_resource_role"
-  add_index "role_assignments", ["accessor_id", "accessor_type", "role_id"], :name => "index_on_role_assigments_accessor_role"
-  add_index "role_assignments", ["accessor_id", "accessor_type"], :name => "index_role_assignments_on_accessor_id_and_accessor_type"
-  add_index "role_assignments", ["resource_id", "resource_type", "role_id"], :name => "index_on_role_assigments_resource_role"
-  add_index "role_assignments", ["resource_id", "resource_type"], :name => "index_role_assignments_on_resource_id_and_resource_type"
-
   create_table "roles", :force => true do |t|
-    t.string  "name"
-    t.string  "key"
-    t.boolean "system",         :default => false
+    t.string  "name",           :limit => nil
+    t.string  "key",            :limit => nil
+    t.boolean "system",                        :default => false
     t.text    "permissions"
     t.integer "environment_id"
     t.integer "profile_id"
@@ -796,13 +815,13 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "search_term_occurrences", ["created_at"], :name => "index_search_term_occurrences_on_created_at"
 
   create_table "search_terms", :force => true do |t|
-    t.string  "term"
+    t.string  "term",             :limit => nil
     t.integer "context_id"
-    t.string  "context_type"
-    t.string  "asset",            :default => "all"
-    t.float   "score",            :default => 0.0
-    t.float   "relevance_score",  :default => 0.0
-    t.float   "occurrence_score", :default => 0.0
+    t.string  "context_type",     :limit => nil
+    t.string  "asset",            :limit => nil, :default => "all"
+    t.float   "score",                           :default => 0.0
+    t.float   "relevance_score",                 :default => 0.0
+    t.float   "occurrence_score",                :default => 0.0
   end
 
   add_index "search_terms", ["asset"], :name => "index_search_terms_on_asset"
@@ -812,7 +831,7 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "search_terms", ["term"], :name => "index_search_terms_on_term"
 
   create_table "sessions", :force => true do |t|
-    t.string   "session_id", :null => false
+    t.string   "session_id", :limit => nil, :null => false
     t.text     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -824,18 +843,18 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "sessions", ["user_id"], :name => "index_sessions_on_user_id"
 
   create_table "suggestion_connections", :force => true do |t|
-    t.integer "suggestion_id",   :null => false
-    t.integer "connection_id",   :null => false
-    t.string  "connection_type", :null => false
+    t.integer "suggestion_id",                  :null => false
+    t.integer "connection_id",                  :null => false
+    t.string  "connection_type", :limit => nil, :null => false
   end
 
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"
     t.integer  "taggable_id"
-    t.string   "taggable_type"
+    t.string   "taggable_type", :limit => nil
     t.datetime "created_at"
     t.integer  "tagger_id"
-    t.string   "tagger_type"
+    t.string   "tagger_type",   :limit => nil
     t.string   "context",       :limit => 128
   end
 
@@ -844,10 +863,10 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   add_index "taggings", ["taggable_id", "taggable_type"], :name => "index_taggings_on_taggable_id_and_taggable_type"
 
   create_table "tags", :force => true do |t|
-    t.string  "name"
+    t.string  "name",           :limit => nil
     t.integer "parent_id"
-    t.boolean "pending",        :default => false
-    t.integer "taggings_count", :default => 0
+    t.boolean "pending",                       :default => false
+    t.integer "taggings_count",                :default => 0
   end
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
@@ -860,11 +879,11 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
     t.integer  "requestor_id"
     t.integer  "target_id"
     t.string   "code",           :limit => 40
-    t.string   "type"
+    t.string   "type",           :limit => nil
     t.datetime "created_at"
-    t.string   "target_type"
+    t.string   "target_type",    :limit => nil
     t.integer  "image_id"
-    t.boolean  "spam",                         :default => false
+    t.boolean  "spam",                          :default => false
     t.integer  "responsible_id"
     t.integer  "closed_by_id"
   end
@@ -885,45 +904,45 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
 
   create_table "thumbnails", :force => true do |t|
     t.integer "size"
-    t.string  "content_type"
-    t.string  "filename"
+    t.string  "content_type", :limit => nil
+    t.string  "filename",     :limit => nil
     t.integer "height"
     t.integer "width"
     t.integer "parent_id"
-    t.string  "thumbnail"
+    t.string  "thumbnail",    :limit => nil
   end
 
   add_index "thumbnails", ["parent_id"], :name => "index_thumbnails_on_parent_id"
 
   create_table "units", :force => true do |t|
-    t.string  "singular",       :null => false
-    t.string  "plural",         :null => false
+    t.string  "singular",       :limit => nil, :null => false
+    t.string  "plural",         :limit => nil, :null => false
     t.integer "position"
-    t.integer "environment_id", :null => false
+    t.integer "environment_id",                :null => false
   end
 
   create_table "users", :force => true do |t|
-    t.string   "login"
-    t.string   "email"
+    t.string   "login",                      :limit => nil
+    t.string   "email",                      :limit => nil
     t.string   "crypted_password",           :limit => 40
     t.string   "salt",                       :limit => 40
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "remember_token"
+    t.string   "remember_token",             :limit => nil
     t.datetime "remember_token_expires_at"
     t.text     "terms_of_use"
     t.string   "terms_accepted",             :limit => 1
     t.integer  "environment_id"
-    t.string   "password_type"
-    t.boolean  "enable_email",                             :default => false
-    t.string   "last_chat_status",                         :default => ""
-    t.string   "chat_status",                              :default => ""
+    t.string   "password_type",              :limit => nil
+    t.boolean  "enable_email",                              :default => false
+    t.string   "last_chat_status",           :limit => nil, :default => ""
+    t.string   "chat_status",                :limit => nil, :default => ""
     t.datetime "chat_status_at"
     t.string   "activation_code",            :limit => 40
     t.datetime "activated_at"
-    t.string   "return_to"
+    t.string   "return_to",                  :limit => nil
     t.datetime "last_login_at"
-    t.string   "private_token"
+    t.string   "private_token",              :limit => nil
     t.datetime "private_token_generated_at"
   end
 
@@ -934,11 +953,11 @@ ActiveRecord::Schema.define(:version => 20150918005035) do
   end
 
   create_table "votes", :force => true do |t|
-    t.integer  "vote",          :null => false
-    t.integer  "voteable_id",   :null => false
-    t.string   "voteable_type", :null => false
+    t.integer  "vote",                         :null => false
+    t.integer  "voteable_id",                  :null => false
+    t.string   "voteable_type", :limit => nil, :null => false
     t.integer  "voter_id"
-    t.string   "voter_type"
+    t.string   "voter_type",    :limit => nil
     t.datetime "created_at"
     t.datetime "updated_at"
   end
