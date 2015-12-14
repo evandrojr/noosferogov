@@ -26,7 +26,7 @@ CSV.foreach(filepath, {:col_sep => ';', :force_quotes => true}) do |row|
   proposal.topic = topic
   proposal.abstract = proposal_body
 #  proposal.name = count.to_s + ' - ' + proposal_body[0..36].titleize
-  proposal.name = proposal_body[0..36].titleize
+  proposal.name = proposal_body[0..37].titleize + '...'
   proposal.profile = topic.profile
   proposal.save!
 
