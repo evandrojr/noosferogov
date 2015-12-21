@@ -34,3 +34,6 @@
 [submodule "plugins/serpro_captcha"]
 	path = plugins/serpro_captcha
 	url = git@softwarepublico.gov.br:noosfero-plugins/serpro_captcha.git
+[submodule "plugins/recaptcha"]
+	path = plugins/recaptcha
+	url = git@softwarepublico.gov.br:noosfero-plugins/recaptcha
