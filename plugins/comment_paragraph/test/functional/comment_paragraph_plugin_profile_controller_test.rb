@@ -39,4 +39,16 @@ class CommentParagraphPluginProfileControllerTest < ActionController::TestCase
     assert_match /d comment/, @response.body
   end
 
+  should 'export comments as CSV' do
+    fast_create(Comment, :created_at => Time.now - 1.days, :source_id => article, :author_id => profile, :title => 'a comment', :body => 'a comment', :paragraph_uuid => nil)
+    fast_create(Comment, :created_at => Time.now - 2.days, :source_id => article, :author_id => profile, :title => 'b comment', :body => 'b comment', :paragraph_uuid => nil)    
+    xhr :get, :export_comments, :profile => @profile.identifier, :id => article.id
+    assert_equal 'text/csv; charset=UTF-8; header=present', @response.content_type
+    assert_equal "Comments for article[#{article.id}]: #{article.path}", @response.body.split("\n")[0]
+  end
+
+  should 'not export any comments as CSV' do
+    xhr :get, :export_comments, :profile => @profile.identifier, :id => article.id
+    assert_equal "No comments for article[#{article.id}]: #{article.path}", @response.body.split("\n")[0]
+  end
 end
