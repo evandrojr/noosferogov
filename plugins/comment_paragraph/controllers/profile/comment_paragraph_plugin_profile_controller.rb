@@ -57,16 +57,16 @@ class CommentParagraphPluginProfileController < ProfileController
     end
     if (@export.first)
       column_names = @export.first.keys
-      header = "Comments for article[#{article_id}]: #{article.path}\n\n"
-      s=CSV.generate do |csv|
+      header = _("Comments for article[%{id}]: %{path}\n\n") % {:id => article_id, :path => article.path}
+      csv_body = CSV.generate do |csv|
         csv << column_names
         @export.each do |x|
           csv << x.values
         end
       end
-      result = header + s
+      result = header + csv_body
     else
-      result = "No comments for article[#{article_id}]: #{article.path}\n\n"
+      result = _("No comments for article[%{id}]: %{path}\n\n") % {:id => article_id, :path => article.path}
     end
     fname = "comments_for_article#{article_id}_#{DateTime.now.to_i}.csv"
     send_data result, 
