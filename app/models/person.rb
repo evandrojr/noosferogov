@@ -129,6 +129,11 @@ class Person < Profile
   scope :activated, -> { joins(:user).where('users.activation_code IS NULL AND users.activated_at IS NOT NULL') }
   scope :deactivated, -> { joins(:user).where('NOT (users.activation_code IS NULL AND users.activated_at IS NOT NULL)') }
 
+  scope :with_role, -> role_id {
+    distinct.joins(:role_assignments).
+    where("role_assignments.role_id = #{role_id}")
+  }
+
   after_destroy do |person|
     Friendship.where(friend_id: person.id).each{ |friendship| friendship.destroy }
   end
