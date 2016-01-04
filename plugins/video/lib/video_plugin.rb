@@ -33,10 +33,14 @@ class VideoPlugin < Noosfero::Plugin
   end
 
   def article_extra_toolbar_buttons(content)
-    if content.kind_of?(VideoPlugin::VideoGallery)
-      url = url_for(:action => 'new', :type=>'VideoPlugin::Video', :controller=>'cms', :parent_id => content.id)
-      {:title => _('New Video'), :url => url, :icon => 'button with-text icon-new'}
-    end
+    return [] if !content.kind_of?(VideoPlugin::VideoGallery)
+    {
+      :id=>"new-video-btn",
+      :class=>"button with-text icon-new",
+      :url=> {:action => 'new', :type=>'VideoPlugin::Video', :controller=>'cms', :parent_id => content.id},
+      :title=>_("New Video"),
+      :icon => :new
+    }
   end
 
 end
