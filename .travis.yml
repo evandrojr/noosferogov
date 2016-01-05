@@ -1,7 +1,7 @@
 notifications:
   irc:
     channels:
-      - "chat.freenode.net#noosferogov"
+      - "chat.freenode.net#noosfero-serpro"
     template:
       - "%{repository_slug} %{branch} %{commit} %{commit_subject} - %{result} %{build_url}"
 
@@ -31,6 +31,7 @@ before_install:
 cache: bundler
 
 before_script:
+  - rm Gemfile.lock
   - mkdir -p tmp/{pids,cache} log
   - script/noosfero-plugins disableall
   #- bundle exec rake makemo &>/dev/null
