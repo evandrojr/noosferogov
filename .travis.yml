@@ -1,8 +1,7 @@
 notifications:
   irc:
     channels:
-      - "chat.freenode.net#noosfero"
-      - "chat.freenode.net#noosfero-br"
+      - "chat.freenode.net#noosfero-serpro"
     template:
       - "%{repository_slug} %{branch} %{commit} %{commit_subject} - %{result} %{build_url}"
 
@@ -48,7 +47,6 @@ env:
   - TASK=cucumber LANG=en
   - TASK=selenium
   - TASK=test:noosfero_plugins BUNDLE_OPTS=install
-
+  - TASK=test
 script:
   - bundle exec rake $TASK
-
