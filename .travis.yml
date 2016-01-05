@@ -26,12 +26,12 @@ addons:
 
 # workaround for https://github.com/travis-ci/travis-ci/issues/4536
 before_install:
+  - rm Gemfile.lock
   - export GEM_HOME=$PWD/vendor/bundle/ruby/2.2.0
   - gem install bundler
 cache: bundler
 
 before_script:
-  - rm Gemfile.lock
   - mkdir -p tmp/{pids,cache} log
   - script/noosfero-plugins disableall
   #- bundle exec rake makemo &>/dev/null
