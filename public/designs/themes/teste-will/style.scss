@@ -53,7 +53,7 @@ input.button.with-text {
 body {
   /*background: #EEE;*/
   font-family: Liberation Sans, Arial, sans-serif;
-  border:50px solid red;
+  
 
 
 }
@@ -207,7 +207,7 @@ body, th, td, input {
 
 #navigation {
   position: absolute;
-  top: 49px;
+  top: 90px;
   right: 0px;
   width: 100%;
   text-align: right;
@@ -438,7 +438,7 @@ div#notice {
 
 .action-home-index .blocks > .block-outer:nth-child(1){
 	background: url(imgs/fundo-buscar-portal.jpg) no-repeat;
-	height:943px;
+	height:817px;
 }
 .action-home-index .blocks > .block-outer:nth-child(2){
 	background: url(imgs/fundo-egov.jpg) no-repeat;
@@ -464,8 +464,9 @@ div#notice {
 	height:765px;
 }
 
-.block-outer{
+body:not(.action-home-index) .block-outer{
   border:1px solid grey;
+  margin-bottom:20px;
 }
 
 .block a {
@@ -1670,3 +1671,81 @@ table#recaptcha_table tr:hover td {
   background:transparent;
 }
 
+/*busca na home*/
+.action-home-index #top-search input{
+	font-size:38px;
+	padding: 16px;
+	color:#D6D6D6;
+	width: 60%;
+	margin: 0 auto;
+    display: block;
+	border:2px solid #C9C9C9;
+}
+.action-home-index form#top-search{
+    
+    margin: 0 auto;
+	padding-top: 120px;
+}
+
+.action-home-index #navigation li{
+	width:auto;
+}
+
+.action-home-index #navigation a {
+	color:#FFF;
+	border:none;
+	font-size:14px;
+}
+
+.action-home-index #navigation ul{
+	margin-right: 16%;
+}
+
+.action-home-index #navigation a:hover {
+	font-size:15px;
+	background:none;
+}
+.action-home-index #navigation span{
+	padding: 0px 10px 0px 10px;
+	border-left: 1px solid #FFF;
+}
+/*bloco do Governo Eletrônico*/
+.egov{
+    width: 70%;
+    height: 400px;
+    border: 1px solid red;
+    margin: 130px auto;
+}
+.egov li{
+	float:left;
+	display:block;
+	width:150px;
+	height:150px;
+	margin:20px;
+	border:1px solid #fff;
+	
+}
+
+.egov li strong{
+	position:absolute;
+	text-indent:-10000px;
+}
+/*definição dos botões Governo Eletrônico*/
+li.ed {
+	 background: url(imgs/bt-egov-educ.png) no-repeat transparent;
+}
+li.sa {
+	 background: url(imgs/bt-egov-saude.png) no-repeat transparent;
+}
+li.se {
+	 background: url(imgs/bt-egov-seg.png) no-repeat transparent;
+}
+li.in {
+	 background: url(imgs/bt-egov-info.png) no-repeat transparent;
+}
+li.go {
+	 background: url(imgs/bt-egov-gov.png) no-repeat transparent;
+}
+.conteudo{
+	display:none;
+}
