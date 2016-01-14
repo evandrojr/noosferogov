@@ -421,6 +421,10 @@ class Profile < ActiveRecord::Base
     !profiles.exists?
   end
 
+  def self.visible_for_person(person)
+    self.all
+  end
+
   validates_presence_of :identifier, :name
   validates_length_of :nickname, :maximum => 16, :allow_nil => true
   validate :valid_template

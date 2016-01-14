@@ -4,6 +4,8 @@ module Noosfero
       class People < Grape::API
         before { authenticate! }
 
+        MAX_PER_PAGE = 50
+
         desc 'API Root'
 
         resource :people do
@@ -105,6 +107,20 @@ module Noosfero
             present output
           end
         end
+
+        resource :profiles do
+          segment '/:profile_id' do
+            resource :members do
+              paginate per_page: MAX_PER_PAGE, max_per_page: MAX_PER_PAGE
+              get do
+                profile = environment.profiles.find_by_id(params[:profile_id])
+                members = select_filtered_collection_of(profile, 'members', params)
+                present members, :with => Entities::Person, :current_person => current_person
+              end
+            end
+          end
+        end
+
       end
     end
   end
