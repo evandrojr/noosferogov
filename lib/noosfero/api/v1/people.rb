@@ -105,6 +105,19 @@ module Noosfero
             present output
           end
         end
+
+        resource :profiles do
+          segment '/:profile_id' do
+            resource :members do
+              get do
+                profile = environment.profiles.find_by_id(params[:profile_id])
+                members = profile.members
+                present members, :with => Entities::Person, :current_person => current_person
+              end
+            end
+          end
+        end
+
       end
     end
   end
