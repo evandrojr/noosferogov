@@ -40,11 +40,13 @@ class CommentParagraphPluginProfileControllerTest < ActionController::TestCase
   end
 
   should 'export comments as CSV' do
-    fast_create(Comment, :created_at => Time.now - 1.days, :source_id => article, :author_id => profile, :title => 'a comment', :body => 'a comment', :paragraph_uuid => nil)
-    fast_create(Comment, :created_at => Time.now - 2.days, :source_id => article, :author_id => profile, :title => 'b comment', :body => 'b comment', :paragraph_uuid => nil)    
+    comment1 = fast_create(Comment, :created_at => Time.now - 1.days, :source_id => article, :author_id => profile, :title => 'a comment', :body => 'a comment', :paragraph_uuid => nil)
+    comment2 = fast_create(Comment, :created_at => Time.now - 2.days, :source_id => article, :author_id => profile, :title => 'b comment', :body => 'b comment', :paragraph_uuid => nil)
     xhr :get, :export_comments, :profile => @profile.identifier, :id => article.id
     assert_equal 'text/csv; charset=UTF-8; header=present', @response.content_type
-    assert_equal "Comments for article[#{article.id}]: #{article.path}", @response.body.split("\n")[0]
+    lines = @response.body.split("\n")
+    assert_equal "paragraph_text,comment_id,comment_title,comment_content,comment_author_name,comment_author_email", lines.first
+    assert_equal ",#{comment2.id},b comment,b comment,#{comment2.author_name},#{comment2.author_email}", lines.second
   end
 
   should 'not export any comments as CSV' do
