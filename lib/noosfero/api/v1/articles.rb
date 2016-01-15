@@ -260,6 +260,15 @@ module Noosfero
 
         end
 
+        resource :profiles do
+          get ':id/home_page' do
+            profiles = environment.profiles
+            profiles = profiles.visible_for_person(current_person)
+            profile = profiles.find_by_id(params[:id])
+            present_partial profile.home_page, :with => Entities::Article
+          end
+        end
+
         kinds = %w[profile community person enterprise]
         kinds.each do |kind|
           resource kind.pluralize.to_sym do
