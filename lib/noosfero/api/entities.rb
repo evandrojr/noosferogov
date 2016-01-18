@@ -6,6 +6,34 @@ module Noosfero
         date.strftime('%Y/%m/%d %H:%M:%S') if date
       end
 
+      PERMISSIONS = {
+        :admin => 0,
+        :self  => 10,
+        :friend => 20,
+        :logged_user => 30,
+        :anonymous => 40
+      }
+
+      def self.can_display? profile, options, field, permission = :friend
+        return true if profile.public_fields.map{|f| f.to_sym}.include?(field.to_sym)
+        current_person = options[:current_person]
+
+        current_permission = if current_person.present?
+          if current_person.is_admin?
+            :admin
+          elsif current_person == profile
+            :self
+          elsif current_person.friends.include?(profile)
+            :friend
+          else
+            :logged_user
+          end
+        else
+          :anonymous
+        end
+        PERMISSIONS[current_permission] <= PERMISSIONS[permission]
+      end
+
       class Image < Entity
         root 'images', 'image'
 
@@ -51,14 +79,39 @@ module Noosfero
         expose :parent_id
       end
 
+      class Block < Entity
+        root 'blocks', 'block'
+        expose :id, :type, :settings, :position, :enabled
+        expose :mirror, :mirror_block_id, :title
+      end
+
+      class Box < Entity
+        root 'boxes', 'box'
+        expose :id, :position
+        expose :blocks, :using => Block
+      end
+
       class Profile < Entity
-        expose :id
-        expose :identifier
-        expose :name
+        expose :identifier, :name, :id
         expose :created_at, :format_with => :timestamp
         expose :updated_at, :format_with => :timestamp
+        expose :additional_data do |profile, options|
+          hash ={}
+          profile.public_values.each do |value|
+            hash[value.custom_field.name]=value.value
+          end
+
+          private_values = profile.custom_field_values - profile.public_values
+          private_values.each do |value|
+            if Entities.can_display?(profile,options,:custom_field)
+              hash[value.custom_field.name]=value.value
+            end
+          end
+          hash
+        end
         expose :image, :using => Image
         expose :region, :using => Region
+        expose :type
       end
 
       class UserBasic < Entity
@@ -69,14 +122,14 @@ module Noosfero
       class Person < Profile
         root 'people', 'person'
         expose :user, :using => UserBasic, documentation: {type: 'User', desc: 'The user data of a person' }
-        expose :vote_count, if: lambda { |object, options| options[:fields].present? ? options[:fields].include?('vote_count') : false}
-        expose :comments_count, if: lambda { |object, options| options[:fields].present? ? options[:fields].include?('comments_count') : false}  do |person, options|
+        expose :vote_count
+        expose :comments_count do |person, options|
           person.comments.count
         end
-        expose :following_articles_count, if: lambda { |object, options| options[:fields].present? ? options[:fields].include?('following_articles_count') : false}  do |person, options|
+        expose :following_articles_count do |person, options|
           person.following_articles.count
         end
-        expose :articles_count, if: lambda { |object, options| options[:fields].present? ? options[:fields].include?('articles_count') : false}  do |person, options|
+        expose :articles_count do |person, options|
           person.articles.count
         end
 
@@ -89,7 +142,10 @@ module Noosfero
       class Community < Profile
         root 'communities', 'community'
         expose :description
-        expose :categories
+        expose :admins do |community, options|
+          community.admins.map{|admin| {"name"=>admin.name, "id"=>admin.id}}
+        end
+        expose :categories, :using => Category
         expose :members, :using => Person
       end
 
@@ -121,9 +177,11 @@ module Noosfero
         expose :votes_count
         expose :comments_count
         expose :archived, :documentation => {:type => "Boolean", :desc => "Defines if a article is readonly"}
+        expose :type
       end
 
       class Article < ArticleBase
+        root 'articles', 'article'
         expose :parent, :using => ArticleBase
         expose :children, using: ArticleBase do |article, options|
           article.children.limit(Noosfero::API::V1::Articles::MAX_PER_PAGE)
@@ -137,15 +195,18 @@ module Noosfero
         expose :author, :using => Profile
       end
 
-
       class User < Entity
         root 'users', 'user'
-        expose :id
-        expose :login
-        expose :email
+
+        attrs = [:id,:login,:email]
+
+        attrs.each do |attribute|
+          expose attribute, :if => lambda{|user,options| Entities.can_display?(user.person, options, attribute)}
+        end
+
         expose :person, :using => Person
         expose :activated?, as: :activated
-        expose :permissions do |user, options|
+        expose :permissions, :if => lambda{|user,options| Entities.can_display?(user.person, options, :permissions, :self)} do |user, options|
           output = {}
           user.person.role_assignments.map do |role_assigment|
             if role_assigment.resource.respond_to?(:identifier) && !role_assigment.role.nil?
@@ -157,6 +218,7 @@ module Noosfero
       end
 
       class UserLogin < User
+        root 'users', 'user'
         expose :private_token, documentation: {type: 'String', desc: 'A valid authentication code for post/delete api actions'}, if: lambda {|object, options| object.activated? }
       end
 
@@ -175,6 +237,15 @@ module Noosfero
         expose :name
       end
 
+      class Activity < Entity
+        root 'activities', 'activity'
+        expose :id, :params, :verb, :created_at, :updated_at, :comments_count, :visible
+        expose :user, :using => Profile
+        expose :target do |activity, opts|
+          type_map = {Profile => ::Profile, ArticleBase => ::Article}.find {|h| activity.target.kind_of?(h.last)}
+          type_map.first.represent(activity.target) unless type_map.nil?
+        end
+      end
 
     end
   end

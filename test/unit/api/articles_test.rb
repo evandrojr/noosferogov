@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper'
+require_relative 'test_helper'
 
 class ArticlesTest < ActiveSupport::TestCase
 
@@ -40,11 +40,12 @@ class ArticlesTest < ActiveSupport::TestCase
   end
 
   should 'list article children' do
-    article = fast_create(Article, :profile_id => user.person.id, :name => "Some thing")
-    child1 = fast_create(Article, :parent_id => article.id, :profile_id => user.person.id, :name => "Some thing")
-    child2 = fast_create(Article, :parent_id => article.id, :profile_id => user.person.id, :name => "Some thing")
+    article = create(Article, :profile_id => user.person.id, :name => "Parent")
+    child1 = create(Article, :parent_id => article.id, :profile_id => user.person.id, :name => "Some Child")
+    child2 = create(Article, :parent_id => article.id, :profile_id => user.person.id, :name => "Some Child2")
     get "/api/v1/articles/#{article.id}/children?#{params.to_query}"
     json = JSON.parse(last_response.body)
+
     assert_equivalent [child1.id, child2.id], json["articles"].map { |a| a["id"] }
   end
 
@@ -154,7 +155,7 @@ class ArticlesTest < ActiveSupport::TestCase
     post "/api/v1/articles/#{article.id}/vote?#{params.to_query}"
     json = JSON.parse(last_response.body)
     ## The api should not allow to save this vote
-    assert_equal false, json['vote']
+    assert_equal 400, last_response.status
   end
 
 

@@ -102,7 +102,8 @@ class User < ActiveRecord::Base
     end
   end
 
-  has_one :person, :dependent => :destroy
+  # set autosave to false as we do manually when needed and Person syncs with us
+  has_one :person, dependent: :destroy, autosave: false
   belongs_to :environment
 
   has_many :sessions, dependent: :destroy
@@ -169,11 +170,6 @@ class User < ActiveRecord::Base
     unless self.private_token
       self.generate_private_token
     end
-  end
-
-  TOKEN_VALIDITY = 2.weeks
-  def private_token_expired?
-    self.private_token.nil? || (self.private_token_generated_at + TOKEN_VALIDITY < DateTime.now)
   end
 
   # Activates the user in the database.
@@ -358,12 +354,12 @@ class User < ActiveRecord::Base
   end
 
   def name
-    name = (self[:name] || login)
+    name = (@name || login)
     person.nil? ? name : (person.name || name)
   end
 
   def name= name
-    self[:name] = name
+    @name = name
   end
 
   def enable_email!

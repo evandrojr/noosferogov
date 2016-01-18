@@ -13,9 +13,6 @@
 [submodule "plugins/email_article"]
 	path = plugins/email_article
 	url = https://softwarepublico.gov.br/gitlab/noosfero-plugins/email_article.git
-[submodule "public/proposal-app"]
-	path = public/proposal-app
-	url = https://gitlab.com/participa/proposal-app.git
 [submodule "plugins/gravatar_provider"]
 	path = plugins/gravatar_provider
 	url = https://softwarepublico.gov.br/gitlab/noosfero-plugins/gravatar-provider.git

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper'
+require_relative 'test_helper'
 
 class SearchTest < ActiveSupport::TestCase
 
@@ -23,6 +23,16 @@ class SearchTest < ActiveSupport::TestCase
     assert_not_empty json['articles']
   end
 
+  should 'list only articles that has children' do
+    article = fast_create(Article, :profile_id => person.id)
+    parent = create(Article, :profile_id => person.id, :name => 'parent article')
+    child = create(Article, :profile_id => person.id, :parent_id => parent.id, :name => 'child article')
+
+    get "/api/v1/search/article?has_children=true"
+    json = JSON.parse(last_response.body)
+    assert_equal parent.id, json['articles'].first['id']
+  end
+
   should 'invalid search string articles' do
     fast_create(Article, :profile_id => person.id, :name => 'some article')
     get "/api/v1/search/article?query=test"
@@ -30,7 +40,8 @@ class SearchTest < ActiveSupport::TestCase
     assert_empty json['articles']
   end
 
-  should 'do not list articles of wrong type' do
+  should 'not list articles of wrong type' do
+    Article.delete_all
     fast_create(Article, :profile_id => person.id)
     get "/api/v1/search/article?type=TinyMceArticle"
     json = JSON.parse(last_response.body)
@@ -130,8 +141,19 @@ class SearchTest < ActiveSupport::TestCase
     article2.categories<< category2
     get "/api/v1/search/article?category_ids[]=#{category1.id}&category_ids[]=#{category2.id}"
     json = JSON.parse(last_response.body)
+    ids = [article1.id, article2.id]
     assert_equal 2, json['articles'].count
-    assert_equivalent [article1.id, article2.id], json['articles'].map{|a| a['id']}
+    assert_includes ids, json['articles'].first["id"]
+    assert_includes ids, json['articles'].last["id"]
+  end
+
+  should 'list only articles that was archived' do
+    article1 = fast_create(Article, :profile_id => person.id)
+    article2 = fast_create(Article, :profile_id => person.id, archived: true)
+
+    get "/api/v1/search/article?archived=true"
+    json = JSON.parse(last_response.body)
+    assert_equal [article2.id], json['articles'].map {|a| a['id']}
   end
 
 end
