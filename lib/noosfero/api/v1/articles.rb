@@ -156,15 +156,12 @@ module Noosfero
               if vote
                 @current_tmp_user.data << article.id
                 @current_tmp_user.store
-        				begin
-  	              vote = Vote.new(:voteable => article, :voter => current_person, :vote => value)
-  	              {:vote => vote.save}
-        				rescue ActiveRecord::RecordInvalid => e
-  	              render_api_error!(e.message, 400)
-        	      end
                 {:vote => do_vote(article, current_person, value)}
-              vote = Vote.new(:voteable => article, :voter => current_person, :vote => value)
-              {:vote => vote.save}
+              else
+                {:vote => false}
+              end
+            else
+              {:vote => do_vote(article, current_person, value)}
             end
           end
 
@@ -206,7 +203,7 @@ module Noosfero
             child.hit
             present_partial child, :with => Entities::Article
           end
-
+          
           desc 'Suggest a article to another profile' do
             detail 'Suggest a article to another profile (person, community...)'
             params Noosfero::API::Entities::Article.documentation
