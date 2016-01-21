@@ -28,7 +28,17 @@ class CommentGroupPlugin < Noosfero::Plugin
     true
   end
 
-
+  def article_extra_toolbar_buttons(article)
+    user = context.send :user
+    return [] if !article.comment_group_plugin_enabled? || !article.allow_edit?(user)
+    [
+      {
+      :title => _('Export Comments'),
+      :url => {:controller => 'comment_group_plugin_profile', :profile => article.profile.identifier, :action => 'export_comments', :id => article.id},
+      :icon => :toggle_comment_paragraph
+      }
+    ]
+  end
 end
 
 require_dependency 'comment_group_plugin/macros/allow_comment'
