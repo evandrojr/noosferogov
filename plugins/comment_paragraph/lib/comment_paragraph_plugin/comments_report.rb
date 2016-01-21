@@ -5,22 +5,24 @@ module CommentParagraphPlugin::CommentsReport
     comments_map = article.comments.group_by { |comment| comment.paragraph_uuid }
     @export = []
     doc =  Nokogiri::HTML(article.body)
+    paragraph_id = 1
     doc.css("[data-macro-paragraph_uuid]").map do |paragraph|
       uuid = paragraph.attributes['data-macro-paragraph_uuid'].value
       comments_for_paragraph = comments_map[uuid]
       if comments_for_paragraph
         # Put comments for the paragraph
         comments_for_paragraph.each do | comment |
-          @export << create_comment_element(comment, paragraph)
+          @export << create_comment_element(comment, paragraph, paragraph_id)
         end
       else # There are no comments for this paragraph
-        @export << { paragraph_text: paragraph }
+        @export << { paragraph_id: paragraph_id, paragraph_text: paragraph }
       end
+      paragraph_id += 1
     end
     # Now we need to put all other comments that are not attached to a paragraph
     comments_without_paragrah = comments_map[nil] || []
     comments_without_paragrah.each do | comment |
-      @export << create_comment_element(comment, nil)
+      @export << create_comment_element(comment, nil, nil)
     end
     return _("No comments for article[%{id}]: %{path}\n\n") % {:id => article.id, :path => article.path} if @export.empty?
 
@@ -33,10 +35,12 @@ module CommentParagraphPlugin::CommentsReport
 
   private
 
-  def create_comment_element(comment, paragraph)
+  def create_comment_element(comment, paragraph, paragraph_id)
     {
+      paragraph_id: paragraph_id,
       paragraph_text: paragraph.present? ? paragraph.text : nil,
       comment_id: comment.id,
+      comment_reply_to: comment.reply_of_id,
       comment_title: comment.title,
       comment_content: comment.body,
       comment_author_name: comment.author_name,
