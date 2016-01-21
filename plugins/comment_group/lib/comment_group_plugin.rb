@@ -30,7 +30,7 @@ class CommentGroupPlugin < Noosfero::Plugin
 
   def article_extra_toolbar_buttons(article)
     user = context.send :user
-    return [] if !article.comment_group_plugin_enabled? || !article.allow_edit?(user)
+    return [] if !article.allow_edit?(user) || article.comments.where("comments.group_id is not null").empty?
     [
       {
       :title => _('Export Comments'),
