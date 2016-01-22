@@ -21,7 +21,7 @@ SET default_with_oids = false;
 
 --
 -- TOC entry 200 (class 1259 OID 21961)
--- Name: custom_fields; Type: TABLE; Schema: public; Owner: j; Tablespace: 
+-- Name: custom_fields; Type: TABLE; Schema: public; Owner: j; Tablespace:
 --
 
 CREATE TABLE custom_fields (
@@ -80,9 +80,38 @@ ALTER TABLE ONLY custom_fields ALTER COLUMN id SET DEFAULT nextval('custom_field
 -- Data for Name: custom_fields; Type: TABLE DATA; Schema: public; Owner: j
 --
 
-INSERT INTO custom_fields VALUES (4, 'UF', 'string', '', '--- Community
+INSERT INTO custom_fields VALUES (4, 'UF', 'list', '', '--- Community
 ...
-', '', true, true, true, 1, '2016-01-22 19:11:15.396396', '2016-01-22 19:11:15.396396');
+',  '---
+- AC
+- AL
+- AP
+- AM
+- BA
+- CE
+- DF
+- ES
+- GO
+- MA
+- MT
+- MS
+- MG
+- PR
+- PB
+- PA
+- PE
+- PI
+- RJ
+- RN
+- RS
+- RO
+- RR
+- SC
+- SE
+- SP
+- TO
+', true, true, true, 1, '2016-01-22 19:11:15.396396', '2016-01-22 19:11:15.396396');
+
 INSERT INTO custom_fields VALUES (5, 'Tipo Telecentro', 'list', 'Comunitário', '--- Community
 ...
 ', '---
@@ -181,7 +210,7 @@ SELECT pg_catalog.setval('custom_fields_id_seq', 33, true);
 
 --
 -- TOC entry 2193 (class 2606 OID 21975)
--- Name: custom_fields_pkey; Type: CONSTRAINT; Schema: public; Owner: j; Tablespace: 
+-- Name: custom_fields_pkey; Type: CONSTRAINT; Schema: public; Owner: j; Tablespace:
 --
 
 ALTER TABLE ONLY custom_fields
@@ -190,7 +219,7 @@ ALTER TABLE ONLY custom_fields
 
 --
 -- TOC entry 2194 (class 1259 OID 21976)
--- Name: index_custom_field; Type: INDEX; Schema: public; Owner: j; Tablespace: 
+-- Name: index_custom_field; Type: INDEX; Schema: public; Owner: j; Tablespace:
 --
 
 CREATE UNIQUE INDEX index_custom_field ON custom_fields USING btree (customized_type, name, environment_id);
@@ -201,4 +230,3 @@ CREATE UNIQUE INDEX index_custom_field ON custom_fields USING btree (customized_
 --
 -- PostgreSQL database dump complete
 --
-
