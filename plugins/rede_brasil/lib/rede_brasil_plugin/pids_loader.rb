@@ -1,12 +1,15 @@
 class RedeBrasilPlugin::PidsLoader
 
   @UFs=["AC",	"AL",	"AP",	"AM",	"BA",	"CE",	"DF",	"ES",	"GO",	"MA",	"MT",	"MS",	"MG",	"PR",	"PB",	"PA",	"PE",	"PI",	"RJ",	"RN",	"RS",	"RO",	"RR",	"SC",	"SE",	"SP",	"TO"]
-
+  @pids_type =["Comunitário", "Escola Aberta", "Espaço Cidadão", "Ponto Cultural"]
 
   def self.load
     c = Community.new
   end
 
+  def self.schema_create
+    
+  end
 
 end
 h ={"is_template"=>"true",
