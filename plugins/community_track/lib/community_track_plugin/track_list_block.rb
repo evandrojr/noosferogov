@@ -100,8 +100,8 @@ class CommunityTrackPlugin::TrackListBlock < Block
           cookies[:_noosfero_community_tracks_rand_seed] = {value: rand, expires: Time.now + 600}
         end
         #XXX postgresql specific
-        seed_val = environment.connection.quote(cookies[:_noosfero_community_tracks_rand_seed])
-        environment.connection.execute("select setseed(#{seed_val})")
+        seed_val = Environment.connection.quote(cookies[:_noosfero_community_tracks_rand_seed])
+        Environment.connection.execute("select setseed(#{seed_val})")
       end
     end
   end
