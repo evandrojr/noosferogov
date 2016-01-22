@@ -20,7 +20,6 @@ class OauthClientPluginPublicController < PublicController
 
   def finish
     if session.delete(:oauth_client_popup) || params[:oauth_client_popup]
-      current_user.private_token_expired? if current_user.present?
       private_token = current_user.present? ? current_user.private_token : ''
       render 'oauth_client_plugin_public/finish', :locals => {:private_token => private_token}, :layout => false
     else
