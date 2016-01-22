@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+require File.dirname(__FILE__) + '/../config/environment'
+require 'csv'
+
+author = User.find_by_email('3confjuvetapanacional@gmail.com').person
+#discussion = ProposalsDiscussionPlugin::Discussion.first
+topic = nil 
+
+count = 0 
+filepath = File.dirname(__FILE__) + '/../tmp/propostas.csv'
+CSV.foreach(filepath, {:col_sep => ';', :force_quotes => true}) do |row|
+  count += 1
+  puts row.inspect
+  topic_name, proposal_body = row
+  next if proposal_body.nil?
+  topic_name = topic_name.chomp
+  proposal_body = proposal_body.chomp
+puts count.inspect
+puts topic_name.inspect
+puts proposal_body.inspect
+  topic = ProposalsDiscussionPlugin::Topic.find_by_slug(topic_name) if topic.nil? || topic.name != topic_name
+
+puts topic.inspect
+
+  proposal = ProposalsDiscussionPlugin::Proposal.new
+  proposal.author = author
+  proposal.topic = topic
+  proposal.abstract = proposal_body
+#  proposal.name = count.to_s + ' - ' + proposal_body[0..36].titleize
+  proposal.name = proposal_body[0..37].titleize + '...'
+  proposal.profile = topic.profile
+  proposal.save!
+
+puts proposal.inspect
+end
+
+
