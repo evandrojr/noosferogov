@@ -1,6 +1,6 @@
 require_relative '../rede_brasil_plugin'
 
-class RedeBrasilPlugin::PidsLoader
+class RedeBrasilPlugin::CustomFieldsFiller
 
   require 'csv'
   require 'time'
@@ -18,7 +18,7 @@ class RedeBrasilPlugin::PidsLoader
 
   def self.load
 #    pids = CSV.read('guests.csv', headers:true, CSV::Converters.keys + [:datePt2Date])
-    c = Community.new
+
     pids = CSV.read(__dir__ + '/../../data/data.csv', headers: true, converters: CSV::Converters.keys)
   end
 

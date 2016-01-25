@@ -1,6 +1,6 @@
 require_relative '../rede_brasil_plugin'
 
-class RedeBrasilPlugin::PidsLoader
+class RedeBrasilPlugin::Transform
 
   require 'csv'
   require 'time'
@@ -12,21 +12,51 @@ class RedeBrasilPlugin::PidsLoader
     end
   }
 
+  @raw = __dir__ + '/../../data/data.csv'
+  @transformed = __dir__ + '/../../data/transformed.csv'
 
-  # @UFs=["AC",	"AL",	"AP",	"AM",	"BA",	"CE",	"DF",	"ES",	"GO",	"MA",	"MT",	"MS",	"MG",	"PR",	"PB",	"PA",	"PE",	"PI",	"RJ",	"RN",	"RS",	"RO",	"RR",	"SC",	"SE",	"SP",	"TO"]
-  # @pids_type =["Comunitário", "Escola Aberta", "Espaço Cidadão", "Ponto Cultural"]
+  def self.status
+    new_status_csv  = []
+    line = 2
+    CSV.foreach(@raw, headers: true) do |c| # Iterate over each row of our CSV file
+      if line == 2
+        #Add headers
+        new_status_csv << c.to_hash.keys - (['Status Ativo'] + ['Status Inativo'] + ['Status Parcial'] + ['Status Sem Informação'])
+      end
+      sum = 0
+      sum=(c['Status Ativo']).to_i + (c['Status Inativo']).to_i + (c['Status Parcial']).to_i + (c['Status Sem Informação']).to_i
+      # puts "Linha: #{line} soma: #{sum}"
+      c['Status'] = 'inválido'
+      if sum != 1 and line >= 9
+        puts "Erro checando Status soma status #{sum} line #{line}"
+      else
+        c['Status'] = "Ativo" if (c['Status Ativo']).to_i == 1
+        c['Status'] = "Inativo" if (c['Status Inativo']).to_i == 1
+        c['Status'] = "Parcial" if (c['Status Parcial']).to_i == 1
+        c['Status'] = "Sem informação" if (c['Status Sem Informação']).to_i == 1
+      end
+      c.delete('Status Ativo')
+      c.delete('Status Inativo')
+      c.delete('Status Parcial')
+      c.delete('Status Sem Informação')
+      new_status_csv << c
+      # guest['Total $ spent'] = guest['Total $ spent'].to_f #
+      # new_guests_csv << guest # Add the new row into new_guests_csv
+      line+=1
+    end
+    # ap new_status_csv
 
-  def self.load
-#    pids = CSV.read('guests.csv', headers:true, CSV::Converters.keys + [:datePt2Date])
-    c = Community.new
-    pids = CSV.read(__dir__ + '/../../data/data.csv', headers: true, converters: CSV::Converters.keys)
+    CSV.open(@transformed, 'w') do |csv| # Create a new file updated_guests.csv
+      new_status_csv.each do |row|
+        csv.puts row
+      end
+    end
+
   end
 
   def self.schema_create
 
   end
-
-  load
 
 end
 h ={"is_template"=>"true",

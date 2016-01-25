@@ -1,6 +1,4 @@
-name,ID Telecentro,UF,Tipo Telecentro,"Nome da instituição recebedora da doação, conforme ofício",Nome da instituição parceira (responsável pelo telecentro),Nome do Telecentro,Data da Adesão,Telecentros com Micros para Doação Realizado,Telecentros com Micros para Doação Solicitado,Micros para Doação Realizado,Micros para Doação Solicitado,Data,Hora Inauguração,Situação,Ativo,Inativo,Parcial,"Sem
-Informação",Município,Bairro,Endereço,CEP,Nome do responsável na instituição parceira  (Nome completo),Telefone do responsável na instituição parceira,E-mail do responsável na instituição parceira,Nome do Responsável no Telecentro (1),CPF do Responsável no Telecentro (1),Telefone do Responsável no Telecentro (1),E-mail do Responsável no Telecentro (1),Nome do Responsável no Telecentro (2),CPF do Responsável no Telecentro (2),Telefone do Responsável no Telecentro (2),E-mail do Responsável no Telecentro (2),"Nº Siscor, Nº Protocolo, Data e Hora","Área
-Rural",Observação
+name,ID Telecentro,UF,Tipo Telecentro,"Nome da instituição recebedora da doação, conforme ofício",Nome da instituição parceira (responsável pelo telecentro),Nome do Telecentro,Data da Adesão,Telecentros com Micros para Doação Realizado,Telecentros com Micros para Doação Solicitado,Micros para Doação Realizado,Micros para Doação Solicitado,Data,Hora Inauguração,Situação,Status Ativo,Status Inativo,Status Parcial,Status Sem Informação,Município,Bairro,Endereço,CEP,Nome do responsável na instituição parceira  (Nome completo),Telefone do responsável na instituição parceira,E-mail do responsável na instituição parceira,Nome do Responsável no Telecentro (1),CPF do Responsável no Telecentro (1),Telefone do Responsável no Telecentro (1),E-mail do Responsável no Telecentro (1),Nome do Responsável no Telecentro (2),CPF do Responsável no Telecentro (2),Telefone do Responsável no Telecentro (2),E-mail do Responsável no Telecentro (2),"Nº Siscor, Nº Protocolo, Data e Hora",Área Rural,Observação
 format,string,list,string,string,string,string,date,numeric,numeric,numeric,numeric,date,numeric,numeric,numeric,numeric,numeric,numeric,string,string,text,string,string,string,string,string,string,string,string,string,string,string,string,string,list,text
 default_value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 customized_type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -32,7 +30,7 @@ extras,,"---
 - SE
 - SP
 - TO
-","---
+- Fora do Brasil","---
 - Comunitário
 - Escola Aberta
 - Espaço Cidadão
@@ -45,7 +43,7 @@ signup,0,1,1,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,BA71002,BA,Comunitário,CEFET/BA,,CEFET/BA,,1,,11,,02/12/08,10:00,Necessária visita para verificar reativação,,1,,,Salvador,Barbalho,,,,,,,,,,,,,,,,26/10/12 Mail: Telecentro INATIVO
 ,BA71003,BA,Comunitário,Pronasci,,Pronasci,25/04/14,1,,11,,01/01/11,,Excluir telecentro. Ver OBS.,,1,,,Salvador,,,,,,,,,,,,,,,,,*  Em andamento. Mail 21/08/2013 Vasconcelos não consta o telecentro.
 ,BA71005,BA,Comunitário,OSCIP AVSI NORDESTE,OSCIP AVSI NORDESTE,Telecentro Semente da Ciência,24/03/14,1,,22,,24/10/13,14:30,,1,,,,Salvador,Lapinha,"Rua do Queimado, 17",40325-260,Carolina Barreto Braga,(071) 3035-2492,fabriziopellicelli@avsi.org,Carolina Barreto,784.066.175-00,(71) 3035-2492,carolina.barreto@avis.org.br,,,,,021369/2013-61,,
-,BA71006,BA,Comunitário,Associação Cultural Liberdade é Barra – ACLB,,Associação Cultural Liberdade é Barra – ACLB,,,2,,22,,,Excluir telecentro. Ver OBS.,,,,,,Itapuã,,,,,,,,,,,,,,003849/2012-14,," Vasconcelos mail 21/08/13: excluir telecentro, falta reconhecimento público federal."
+,BA71006,BA,Comunitário,Associação Cultural Liberdade é Barra – ACLB,,Associação Cultural Liberdade é Barra – ACLB,,,2,,22,,,Excluir telecentro. Ver OBS.,,1,,,,Itapuã,,,,,,,,,,,,,,003849/2012-14,," Vasconcelos mail 21/08/13: excluir telecentro, falta reconhecimento público federal."
 ,BA71007,BA,Comunitário,Biblioteca Pública do Estado da Bahia Setor Braile,,Biblioteca Pública do Estado da Bahia Setor Braile,,1,,11,,05/06/09,11:00,Necessária visita para buscar informações,,,,1, Salvador,Barris,"Rua General Labatut, 27",40070-100,Prof. Ubiratan /Ivana Lins,(71) 3116-6913,,,,,,,,,,,,26/10/12 Mail: Telecentro INATIVO
 ,BA71008,BA,Comunitário,Colégio Estadual Helena Magalhães (Pronasci),Colégio Estadual Helena Magalhães (Pronasci),Colégio Estadual Helena Magalhães (Pronasci),24/04/14,1,,11,,20/12/10,10:00,,1,,,,Salvador,Tancredo Neves,Rua Direta de Tancredo Neves s/n°,41205-000,Sr. Wendel Costa da Silva,(71) 3231-8530 /87622342,costafranca@ig.com.br  Cehma@hotmail.com,Sr. Wendel Costa da Silva,648.202.115-87,(71) 3231-8530 /87622342,costafranca@ig.com.br  Cehma@hotmail.com,,,,,,,OK
 ,BA71009,BA,Comunitário,Projeto Roda Baiana – Telecentro Terreiro do Tanuri Junsara,,Projeto Roda Baiana – Telecentro Terreiro do Tanuri Junsara,,1,,7,,06/06/08,10:50,,,1,,,Salvador,Engenho Velho da Federação,"Rua Apolinário Santana, 146",40220-100,Valdelio Santos Silva,(71) 3234-2135,,,,,,,,,,,,26/10/12 Mail: Telecentro INATIVO
