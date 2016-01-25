@@ -1,7 +1,7 @@
 class OauthClientPlugin::Auth < ActiveRecord::Base
 
   attr_accessible :profile, :provider, :enabled,
-    :access_token, :expires_in
+    :access_token, :expires_in, :oauth_data
 
   belongs_to :profile, class_name: 'Profile'
   belongs_to :provider, class_name: 'OauthClientPlugin::Provider'
@@ -11,6 +11,8 @@ class OauthClientPlugin::Auth < ActiveRecord::Base
   validates_uniqueness_of :profile_id, scope: :provider_id
 
   acts_as_having_settings field: :data
+
+  serialize :oauth_data, Hash
 
   def expires_in
     self.expires_at - Time.now

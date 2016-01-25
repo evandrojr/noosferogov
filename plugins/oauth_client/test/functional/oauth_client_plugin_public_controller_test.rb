@@ -14,6 +14,7 @@ class OauthClientPluginPublicControllerTest < ActionController::TestCase
   should 'redirect to signup when user is not found' do
     auth.info.stubs(:email).returns("xyz123@noosfero.org")
     auth.info.stubs(:name).returns('xyz123')
+    auth.stubs(:to_hash).returns({})
     session[:provider_id] = provider.id
 
     get :callback

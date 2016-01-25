@@ -16,7 +16,7 @@ class User
 
   def store_oauth_providers
     @oauth_providers.each do |provider|
-      self.person.oauth_auths.create!(profile: self.person, provider: provider, enabled: true)
+      self.person.oauth_auths.create!(profile: self.person, provider: provider, enabled: true, oauth_data: oauth_data)
     end
   end
 
