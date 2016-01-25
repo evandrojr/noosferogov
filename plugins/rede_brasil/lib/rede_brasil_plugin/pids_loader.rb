@@ -1,34 +1,55 @@
 require_relative '../rede_brasil_plugin'
 
-class RedeBrasilPlugin::PidsLoader
+class RedeBrasilPlugin::PidsLoader < MyProfileController
 
-  require 'csv'
-  require 'time'
-  CSV::Converters[:datePt2Date] = lambda{|s|
-    begin
-      Time.parse(s).to_date
-    rescue ArgumentError
-      s
+  helper CustomFieldsHelper
+  helper :profile
+    # require 'csv'
+    # require 'time'
+    # CSV::Converters[:datePt2Date] = lambda{|s|
+    #   begin
+    #     Time.parse(s).to_date
+    #   rescue ArgumentError
+    #     s
+    #   end
+    # }
+
+    @transformed = __dir__ + '/../../data/transformed.csv'
+
+    @h ={
+    "custom_values"=>{
+      "Micros para Doação Solicitado"=>{"value"=>696969, "public"=>"0"},
+      "Data"=>{"value"=>"2016-12-30", "public"=>"0"}
+      }
+    }
+
+
+    def self.load
+      Community.destroy_all
+      line = 0
+      CSV.foreach(@transformed, headers: true) do |r| # Iterate over each row of our CSV file
+        line += 1
+        # if line==1
+        #   r.headers.each do |h|
+        #     attr_accessible(h.to_sym)
+        #   end
+        # end
+        next if line < 8
+        r.delete('name')
+        ap r
+        c = Community.new
+        c.name = r['Nome']
+        c.save!
+        ap r.to_hash
+
+        c.update!(@h, without_protection: true)
+        return
+      end
+
     end
-  }
-
-
-  # @UFs=["AC",	"AL",	"AP",	"AM",	"BA",	"CE",	"DF",	"ES",	"GO",	"MA",	"MT",	"MS",	"MG",	"PR",	"PB",	"PA",	"PE",	"PI",	"RJ",	"RN",	"RS",	"RO",	"RR",	"SC",	"SE",	"SP",	"TO"]
-  # @pids_type =["Comunitário", "Escola Aberta", "Espaço Cidadão", "Ponto Cultural"]
-
-  def self.load
-#    pids = CSV.read('guests.csv', headers:true, CSV::Converters.keys + [:datePt2Date])
-    c = Community.new
-    pids = CSV.read(__dir__ + '/../../data/data.csv', headers: true, converters: CSV::Converters.keys)
   end
 
-  def self.schema_create
 
-  end
-
-  load
-
-end
 h ={"is_template"=>"true",
 "name"=>"pid",
 "custom_values"=>
@@ -39,7 +60,7 @@ h ={"is_template"=>"true",
   "Instituição Parceira"=>{"value"=>"", "public"=>"0"},
   "Data da Adesão"=>{"value"=>"", "public"=>"0"},
   "Status"=>{"value"=>"Parcial", "public"=>"true"},
-  "ID Telecentro"=>{"value"=>"", "public"=>"0"},
+  "ID Telecentro"=>{"value"=>"ewew", "public"=>"0"},
   "Município"=>{"value"=>"", "public"=>"0"},
   "Nome do responsável na instituição parceira  (Nome completo)"=>{"value"=>"", "public"=>"true"},
   "Telefone do responsável na instituição parceira"=>{"value"=>"", "public"=>"true"},
@@ -66,23 +87,3 @@ h ={"is_template"=>"true",
 "redirect_l10n"=>"0",
 "email_suggestions"=>"0",
 "category_ids"=>[""]}
-
-
-
-# class RedeBrasilPlugin::Pid < Community
-#
-#   def self.type_name
-#     _('Pid')
-#   end
-#
-#   # @e1 = Environment.default
-#   #
-#   # @community = create(Community, :environment => @e1, :name => 'pid test')
-#   #
-#   # @community_custom_field = CustomField.create(:name => "community_field", :format=>"myFormat", :default_value => "value for community", :customized_type=>"Community", :active => true, :environment => @e1)
-#   # # @person_custom_field = CustomField.create(:name => "person_field", :format=>"myFormat", :default_value => "value for person", :customized_type=>"Person", :active => true, :environment => @e1)
-#   # # @profile_custom_field = CustomField.create(:name => "profile_field", :format=>"myFormat", :default_value => "value for any profile", :customized_type=>"Profile", :active => true, :environment => @e1)
-#
-#
-#
-# end

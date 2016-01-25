@@ -1,7 +1,7 @@
-name,ID Telecentro,UF,Tipo Telecentro,"Nome da instituição recebedora da doação, conforme ofício",Nome da instituição parceira (responsável pelo telecentro),Nome do Telecentro,Data da Adesão,Telecentros com Micros para Doação Realizado,Telecentros com Micros para Doação Solicitado,Micros para Doação Realizado,Micros para Doação Solicitado,Data,Hora Inauguração,Situação,Status Ativo,Status Inativo,Status Parcial,Status Sem Informação,Município,Bairro,Endereço,CEP,Nome do responsável na instituição parceira  (Nome completo),Telefone do responsável na instituição parceira,E-mail do responsável na instituição parceira,Nome do Responsável no Telecentro (1),CPF do Responsável no Telecentro (1),Telefone do Responsável no Telecentro (1),E-mail do Responsável no Telecentro (1),Nome do Responsável no Telecentro (2),CPF do Responsável no Telecentro (2),Telefone do Responsável no Telecentro (2),E-mail do Responsável no Telecentro (2),"Nº Siscor, Nº Protocolo, Data e Hora",Área Rural,Observação
+name,ID Telecentro,UF,Tipo Telecentro,"Nome da instituição recebedora da doação, conforme ofício",Nome da instituição parceira (responsável pelo telecentro),Nome,Data da Adesão,Telecentros com Micros para Doação Realizado,Telecentros com Micros para Doação Solicitado,Micros para Doação Realizado,Micros para Doação Solicitado,Data,Hora Inauguração,Situação,Status Ativo,Status Inativo,Status Parcial,Status Sem Informação,Município,Bairro,Endereço,CEP,Nome do responsável na instituição parceira  (Nome completo),Telefone do responsável na instituição parceira,E-mail do responsável na instituição parceira,Nome do Responsável no Telecentro (1),CPF do Responsável no Telecentro (1),Telefone do Responsável no Telecentro (1),E-mail do Responsável no Telecentro (1),Nome do Responsável no Telecentro (2),CPF do Responsável no Telecentro (2),Telefone do Responsável no Telecentro (2),E-mail do Responsável no Telecentro (2),"Nº Siscor, Nº Protocolo, Data e Hora",Área Rural,Observação
 format,string,list,string,string,string,string,date,numeric,numeric,numeric,numeric,date,numeric,numeric,numeric,numeric,numeric,numeric,string,string,text,string,string,string,string,string,string,string,string,string,string,string,string,string,list,text
 default_value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-customized_type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+customized_type,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community
 extras,,"---
 - AC
 - AL
@@ -35,10 +35,13 @@ extras,,"---
 - Escola Aberta
 - Espaço Cidadão
 - Ponto Cultural
-",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-active,1,1,1,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-required,0,1,1,1,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-signup,0,1,1,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"---
+- Não
+- Sim
+",
+active,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+required,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+signup,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 ,BA71001,BA,Ponto Cultura,Fundação Terra Mirim  Simões Filho,,Fundação Terra Mirim  Simões Filho,,1,,4,,23/09/08,10:00,,,1,,,Simões Filho,Centro,Rodovia BA 093 Km 07,,,,iza@terramirim.org.br,,,,,,,,,,,26/10/12 Mail: Telecentro INATIVO
 ,BA71002,BA,Comunitário,CEFET/BA,,CEFET/BA,,1,,11,,02/12/08,10:00,Necessária visita para verificar reativação,,1,,,Salvador,Barbalho,,,,,,,,,,,,,,,,26/10/12 Mail: Telecentro INATIVO
 ,BA71003,BA,Comunitário,Pronasci,,Pronasci,25/04/14,1,,11,,01/01/11,,Excluir telecentro. Ver OBS.,,1,,,Salvador,,,,,,,,,,,,,,,,,*  Em andamento. Mail 21/08/2013 Vasconcelos não consta o telecentro.
