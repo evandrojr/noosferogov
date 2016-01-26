@@ -1,5 +1,6 @@
 require_relative '../rede_brasil_plugin'
 
+
 class RedeBrasilPlugin::PidsLoader < MyProfileController
 
   helper CustomFieldsHelper
@@ -15,6 +16,8 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
     # }
 
     @transformed = __dir__ + '/../../data/transformed.csv'
+    @log = __dir__ + '/../../import.log'
+
 
     @h ={
     "custom_values"=>{
@@ -23,67 +26,66 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
       }
     }
 
+    def self.reset_custom_values
+      @h ={
+        "custom_values"=>{}
+      }
+    end
+
+    def self.append_values(r)
+      r.each do |k,v|
+        @h["custom_values"][k]={"value"=>v, "public"=>"1"}
+      end
+    end
+
+    def self.date_format(brazilian_date)
+      dt = Date.strptime(brazilian_date, '%m/%d/%y')
+      # dt.year + '/' + date.month + '/' + date.day
+      "2001" + '/' + date.month + '/' + date.day
+
+    end
+
+    @no_name=0
+    def self.fix_data(r)
+      unless r['Nome'].present?
+        r['Nome'] = "Sem nome #{@no_name}"
+      end
+      r['Uf'] = 'NI' unless r['Uf'].present?
+      r['Tipo telecentro'] = 'NI' unless r['Tipo telecentro'].present?
+      r['Data'] = date_format(r['Data'])
+      r['Data da Adesão'] = date_format(r['Data da Adesão'])
+      return r
+    end
+
+
+    def log_write
+      File.open(@transformed = __dir__ + '/../../import.log', 'w') { |file| file.write("your text") }
+    end
 
     def self.load
       Community.destroy_all
       line = 0
+      FileUtils.rm_rf @log
+
+
       CSV.foreach(@transformed, headers: true) do |r| # Iterate over each row of our CSV file
         line += 1
-        # if line==1
-        #   r.headers.each do |h|
-        #     attr_accessible(h.to_sym)
-        #   end
-        # end
         next if line < 8
+        r=fix_data(r)
+        reset_custom_values
         r.delete('name')
         ap r
+        next unless r['Nome'].present?
         c = Community.new
         c.name = r['Nome']
         c.save!
         ap r.to_hash
-
-        c.update!(@h, without_protection: true)
-        return
+        append_values(r.to_hash)
+        ap @h
+        File.open(@log, 'a+') {|f| f.write(@h.inspect) }
+        result=c.update!(@h, without_protection: true)
+        ap result
+        break if line == 30
       end
-
     end
   end
-
-
-h ={"is_template"=>"true",
-"name"=>"pid",
-"custom_values"=>
- {
-  "UF"=>{"value"=>"PB", "public"=>"0"},
-  "Tipo Telecentro"=>{"value"=>"Comunitário", "public"=>"0"},
-  "Instituição Beneficiada"=>{"value"=>"Minha mãe 2", "public"=>"0"},
-  "Instituição Parceira"=>{"value"=>"", "public"=>"0"},
-  "Data da Adesão"=>{"value"=>"", "public"=>"0"},
-  "Status"=>{"value"=>"Parcial", "public"=>"true"},
-  "ID Telecentro"=>{"value"=>"ewew", "public"=>"0"},
-  "Município"=>{"value"=>"", "public"=>"0"},
-  "Nome do responsável na instituição parceira  (Nome completo)"=>{"value"=>"", "public"=>"true"},
-  "Telefone do responsável na instituição parceira"=>{"value"=>"", "public"=>"true"},
-  "E-mail do responsável na instituição parceira"=>{"value"=>"", "public"=>"true"},
-  "Nome do Responsável no Telecentro"=>{"value"=>"", "public"=>"true"},
-  "CPF do Responsável no Telecentro"=>{"value"=>"", "public"=>"0"},
-  "Telefone do Responsável no Telecentro"=>{"value"=>"", "public"=>"0"},
-  "E-mail do Responsável no Telecentro"=>{"value"=>"", "public"=>"0"},
-  "Localizado em Área Rural?"=>{"value"=>"Não", "public"=>"0"},
-  "PCs Recebidos"=>{"value"=>"0", "public"=>"0"},
-  "PCs Solicitados"=>{"value"=>"0", "public"=>"0"},
-  "PCs doados"=>{"value"=>"0", "public"=>"0"},
-  "PCs solicitados para serem doados"=>{"value"=>"0", "public"=>"0"},
-  "Hora inalguração"=>{"value"=>"", "public"=>"0"},
-  "Nome do Responsável no Telecentro (2)"=>{"value"=>"", "public"=>"0"}
-},
-"allow_members_to_invite"=>"1",
-"invite_friends_only"=>"0",
-"closed"=>"false",
-"moderated_articles"=>"true",
-"image_builder"=>{"label"=>""},
-"secret"=>"0",
-"public_profile"=>"true",
-"redirect_l10n"=>"0",
-"email_suggestions"=>"0",
-"category_ids"=>[""]}
