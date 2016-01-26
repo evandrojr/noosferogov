@@ -16,6 +16,10 @@ class RedeBrasilPlugin::CustomFieldsFiller
 
     @transformed = __dir__ + '/../../data/transformed.csv'
 
+    def self.destroy
+      ActiveRecord::Base.connection.execute("TRUNCATE custom_fields RESTART IDENTITY")
+    end
+
     def self.create
       @e = Environment.default
       line = 1
@@ -28,6 +32,7 @@ class RedeBrasilPlugin::CustomFieldsFiller
       s = s.transpose
       line = -1
       dont_create = %w{Nome UF Município Município Bairro	Endereço CEP}
+      dont_create = []
       s.each do |r|
         line+=1
         name = r[0]
