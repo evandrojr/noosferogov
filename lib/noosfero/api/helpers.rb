@@ -114,7 +114,6 @@ require_relative '../../find_by_contents'
         end
       end
 
-      ARTICLE_TYPES = ['Article'] + Article.descendants.map{|a| a.to_s}
       TASK_TYPES = ['Task'] + Task.descendants.map{|a| a.to_s}
 
       def find_article(articles, id)
@@ -125,8 +124,9 @@ require_relative '../../find_by_contents'
       def post_article(asset, params)
         return forbidden! unless current_person.can_post_content?(asset)
 
-        klass_type= params[:content_type].nil? ? 'TinyMceArticle' : params[:content_type]
-        return forbidden! unless ARTICLE_TYPES.include?(klass_type)
+        klass_type= params[:content_type].nil? ? TinyMceArticle.name : params[:content_type]
+        article_types = ['Article'] + Article.descendants.map{|a| a.to_s}
+        return forbidden! unless article_types.include?(klass_type)
 
         article = klass_type.constantize.new(params[:article])
         article.last_changed_by = current_person
