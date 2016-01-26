@@ -5,25 +5,13 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
 
   helper CustomFieldsHelper
   helper :profile
-    # require 'csv'
-    # require 'time'
-    # CSV::Converters[:datePt2Date] = lambda{|s|
-    #   begin
-    #     Time.parse(s).to_date
-    #   rescue ArgumentError
-    #     s
-    #   end
-    # }
 
     @transformed = __dir__ + '/../../data/transformed.csv'
     @log = __dir__ + '/../../import.log'
 
 
     @h ={
-    "custom_values"=>{
-      "Micros para Doação Solicitado"=>{"value"=>696969, "public"=>"0"},
-      "Data"=>{"value"=>"2016-12-30", "public"=>"0"}
-      }
+    "custom_values"=>{}
     }
 
     def self.reset_custom_values
@@ -34,21 +22,24 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
 
     def self.append_values(r)
       r.each do |k,v|
-        @h["custom_values"][k]={"value"=>v, "public"=>"1"}
+        @h["custom_values"][k]={"value"=>v, "public"=>true}
       end
     end
 
     def self.date_format(brazilian_date)
-      dt = Date.strptime(brazilian_date, '%m/%d/%y')
-      # dt.year + '/' + date.month + '/' + date.day
-      "2001" + '/' + date.month + '/' + date.day
-
+      begin
+        dt = Date.strptime(brazilian_date, '%d/%m/%y')
+      rescue
+        return '1999-01-01'
+      end
+      "#{dt.year}/#{dt.month}/#{dt.day}"
     end
 
     @no_name=0
     def self.fix_data(r)
       unless r['Nome'].present?
         r['Nome'] = "Sem nome #{@no_name}"
+        @no_name+=1
       end
       r['Uf'] = 'NI' unless r['Uf'].present?
       r['Tipo telecentro'] = 'NI' unless r['Tipo telecentro'].present?
@@ -85,7 +76,7 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
         File.open(@log, 'a+') {|f| f.write(@h.inspect) }
         result=c.update!(@h, without_protection: true)
         ap result
-        break if line == 30
+        # break if line == 30
       end
     end
   end

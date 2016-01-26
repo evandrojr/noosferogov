@@ -32,7 +32,7 @@ class RedeBrasilPlugin::CustomFieldsFiller
       s = s.transpose
       line = -1
       dont_create = %w{Nome UF Município Município Bairro	Endereço CEP}
-      dont_create = []
+      dont_create = %w{Nome}
       s.each do |r|
         line+=1
         name = r[0]
