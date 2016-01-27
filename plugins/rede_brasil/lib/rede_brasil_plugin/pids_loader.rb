@@ -8,17 +8,7 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
 
     @transformed = __dir__ + '/../../data/transformed.csv'
     @log = __dir__ + '/../../import.log'
-
-
-    @h ={
-    "custom_values"=>{}
-    }
-
-    def self.reset_custom_values
-      @h ={
-        "custom_values"=>{}
-      }
-    end
+    @h ={"custom_values"=>{}}
 
     def self.append_values(r)
       r.each do |k,v|
@@ -48,7 +38,6 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
       return r
     end
 
-
     def log_write
       File.open(@transformed = __dir__ + '/../../import.log', 'w') { |file| file.write("your text") }
     end
@@ -58,12 +47,11 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
       line = 0
       FileUtils.rm_rf @log
 
-
       CSV.foreach(@transformed, headers: true) do |r| # Iterate over each row of our CSV file
         line += 1
         next if line < 8
-        r=fix_data(r)
-        reset_custom_values
+        r = fix_data(r)
+        @h = {"custom_values"=>{}}
         r.delete('name')
         ap r
         next unless r['Nome'].present?
