@@ -6,14 +6,6 @@ class RedeBrasilPlugin::CustomFieldsFiller
     require 'time'
     require 'yaml'
 
-    CSV::Converters[:datePt2Date] = lambda{|s|
-      begin
-        Time.parse(s).to_date
-      rescue ArgumentError
-        s
-      end
-    }
-
     @transformed = __dir__ + '/../../data/transformed.csv'
 
     def self.destroy

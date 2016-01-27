@@ -4,21 +4,18 @@ class RedeBrasilPlugin::Transform
 
   require 'csv'
   require 'time'
-  CSV::Converters[:datePt2Date] = lambda{|s|
-    begin
-      Time.parse(s).to_date
-    rescue ArgumentError
-      s
-    end
-  }
-
   @raw = __dir__ + '/../../data/data.csv'
   @transformed = __dir__ + '/../../data/transformed.csv'
 
   def self.status
     new_status_csv  = []
     line = 2
-    CSV.foreach(@raw, headers: true) do |c| # Iterate over each row of our CSV file
+    CSV.foreach(@transformed, headers: true,
+                :header_converters=> lambda do |f|
+                  f.strip
+                  f.gsub(/\n/,'')
+                 end,
+                :converters=> lambda {|f| f ? f.strip : nil}) do |c| # Iterate over each row of our CSV file
       if line == 2
         #Add headers
         new_status_csv << c.to_hash.keys - (['Status Ativo'] + ['Status Inativo'] + ['Status Parcial'] + ['Status Sem Informação']) + ['Status']
