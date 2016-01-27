@@ -1,8 +1,28 @@
-require_relative '../../test_helper'
+require File.dirname(__FILE__) + '/../../test_helper'
+require File.join(Rails.root, '/lib/noosfero/api/helpers.rb')
+
+class OutcomeCaptcha
+  class << self
+    attr_accessor :outcome_captcha_test
+  end
+  @outcome_captcha_test = true
+end
+
+module Noosfero
+  module API
+    module APIHelpers
+      def test_captcha(*args)
+        return true if OutcomeCaptcha.outcome_captcha_test
+        render_api_error!("Error testing captcha", 403)
+      end
+    end
+  end
+end
 
 class ActiveSupport::TestCase
 
   include Rack::Test::Methods
+  include Noosfero::API::APIHelpers
 
   def app
     Noosfero::API::API
@@ -15,29 +35,16 @@ class ActiveSupport::TestCase
     json
   end
 
-  ## Performs a login using the session.rb but mocking the
-  ## real HTTP request to validate the captcha.
   def do_login_captcha_from_api
-    # Request mocking
-    #Net::HTTP::Post Mock
-    request = mock
-    #Net::HTTP Mock
-    http = mock
-    uri = URI(environment.api_captcha_settings[:verify_uri])
-    Net::HTTP.expects(:new).with(uri.host, uri.port).returns(http)
-    Net::HTTP::Post.expects(:new).with(uri.path).returns(request)
-
-    # Captcha required codes
-    request.stubs(:body=).with("0000000000000000&4324343&4030320")
-    http.stubs(:request).with(request).returns(http)
-
-    # Captcha validation success !!
-    http.stubs(:body).returns("1")
-
-    params = {:txtToken_captcha_serpro_gov_br => '4324343', :captcha_text => '4030320'}   
-    post "#{@url}#{params.to_query}"
-    json = JSON.parse(last_response.body)    
+    post "/api/v1/login-captcha"
+    json = JSON.parse(last_response.body)
     json
+  end
+
+  def create_article(name)
+    @environment = Environment.default
+    person = fast_create(Person, :environment_id => @environment.id)
+    fast_create(Article, :profile_id => person.id, :name => name)
   end
 
   def login_api

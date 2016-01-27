@@ -134,7 +134,7 @@ class ArticlesTest < ActiveSupport::TestCase
     ## Perform a vote twice in API should compute only one vote
     post "/api/v1/articles/#{article.id}/vote?#{params.to_query}"
     json = JSON.parse(last_response.body)
-    
+
     post "/api/v1/articles/#{article.id}/vote?#{params.to_query}"
     json = JSON.parse(last_response.body)
 
@@ -168,7 +168,6 @@ class ArticlesTest < ActiveSupport::TestCase
 
     assert_not_equal 401, last_response.status
     assert_equal true, json['vote']
-
   end
 
   should 'not perform a vote in a archived article' do

@@ -240,74 +240,15 @@ class APIHelpersTest < ActiveSupport::TestCase
 
 ###### Captcha tests ######
 
-should 'do not test captcha when there are no settings' do
-  environment = Environment.new
-  assert test_captcha("127.0.0.1", {}, environment)
-end
+ def plugins
+   environment = Environment.default
+   Noosfero::Plugin::Manager.new(environment, self)
+ end
 
-should 'do not test captcha when captcha is disabled on settings' do
-  environment = Environment.new
-  environment.api_captcha_settings = {
-      enabled: false,
-  }
-  assert test_captcha("127.0.0.1", {}, environment)
-end
-
-should 'fail display recaptcha v1' do
-  environment = Environment.new
-  environment.api_captcha_settings = {
-      enabled: true,
-      provider: 'google',
-      version:  1,
-      private_key:  '6LdsWAcTAAAAAB6maB_HalVyCc4asDAxPxloIMvY',
-      public_key:   '6LdsWAcTAAAAAChTUUD6yu9fCDhdIZzNd7F53zf-',
-      verify_uri:   'https://www.google.com/recaptcha/api/verify',
-  }
-  r = test_captcha('127.0.0.1', params, environment)
-  assert_equal(_("Missing captcha data"), r[0][:javascript_console_message])
-end
-
-should 'fail display recaptcha v2' do
-  environment = Environment.new
-  environment.api_captcha_settings = {
-      enabled: true,
-      provider: 'google',
-      version:  2,
-      private_key:  '6LdsWAcTAAAAAB6maB_HalVyCc4asDAxPxloIMvY',
-      public_key:   '6LdsWAcTAAAAAChTUUD6yu9fCDhdIZzNd7F53zf-',
-      verify_uri:   'https://www.google.com/recaptcha/api/siteverify',
-  }
-  r = test_captcha('127.0.0.1', params, environment)
-  assert_equal(_("Missing captcha data"), r[0][:javascript_console_message])
-end
-
-should 'verify if user filled Serpro\' captcha text' do
-  environment = Environment.new
-  environment.api_captcha_settings = {
-      enabled: true,
-      provider: 'serpro',
-      serpro_client_id:  '0000000000000000',
-      verify_uri:   'http://localhost/api/verify',
-  }
-  params = {}
-  params[:txtToken_captcha_serpro_gov_br] = '4324343'
-  assert_equal(_('Captcha text has not been filled'), test_captcha('127.0.0.1', params, environment)[0]['message'])
-end
-
-should 'verify if Serpro\' captcha token has been sent' do
-  environment = Environment.new
-  environment.api_captcha_settings = {
-      enabled: true,
-      provider: 'serpro',
-      serpro_client_id:  '0000000000000000',
-      verify_uri:   'http://localhost/api/verify',
-  }
-  params = {}
-  params[:captcha_text] = '4324343'
-  r = test_captcha('127.0.0.1', params, environment)
-  assert_equal(_("Missing Serpro's Captcha token"), r[0][:javascript_console_message])
-end
-
+ should 'do not test captcha when there is no captcha plugin enabled' do
+   environment = Environment.new
+   assert test_captcha("127.0.0.1", {}, environment)
+ end
 
 ###### END Captcha tests ######
 
