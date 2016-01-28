@@ -1,0 +1,14 @@
+GEM
+  specs:
+    awesome_print (1.6.1)
+    insensitive_hash (0.3.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  awesome_print
+  insensitive_hash
+
+BUNDLED WITH
+   1.11.2

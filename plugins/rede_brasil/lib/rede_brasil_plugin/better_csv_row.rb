@@ -1,0 +1,58 @@
+require 'csv'
+
+class RedeBrasilPlugin::BetterCsvRow
+
+  @csv_row
+  @hash_low_case_keys
+
+  def to_s
+    @csv_row.to_s
+  end
+
+  def original_key(key)
+    @hash_low_case_keys[key.downcase][:original_key]
+  end
+
+  def delete(key)
+    @csv_row.delete(original_key(key))
+    @hash_low_case_keys.delete(key.downcase)
+  end
+
+  def initialize(csv_row)
+    raise "Parameter must be a CSV::Row" unless csv_row.class == CSV::Row
+    @csv_row = csv_row
+    @hash_low_case_keys = @csv_row.to_hash
+    @csv_row.each {|k,v| v = ActionView::Base.full_sanitizer.sanitize(v)}
+    @csv_row.to_hash.each do |k, v|
+      downcased_k = k.downcase
+      @hash_low_case_keys[downcased_k] = {value: v, original_key: k}
+    end
+  end
+
+  def == (key_x,key_y)
+    @hash_low_case_keys[key_x.downcase][:value] == @hash_low_case_keys[key_y.downcase][:value]
+  end
+
+  def []=(key, value)
+    ok = original_key(key)
+    if ok.present?
+      @csv_row[ok]=value
+    else
+      @csv_row[key]=value
+    end
+    @hash_low_case_keys[key.downcase] = {value: value, original_key: key}
+  end
+
+  def [] (key)
+    @hash_low_case_keys[key.downcase][:value]
+  end
+
+  def to_hash
+    @csv_row.to_hash
+  end
+
+  def to_csvrow
+    @csv_row
+  end
+
+end

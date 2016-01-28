@@ -1,4 +1,5 @@
 require_relative '../rede_brasil_plugin'
+require_relative 'better_csv_row'
 
 class RedeBrasilPlugin::PidsLoader < MyProfileController
 
@@ -7,11 +8,11 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
 
     @transformed = __dir__ + '/../../data/transformed.csv'
     @log = __dir__ + '/../../import.log'
-    @h ={"custom_values"=>{}}
+    @custom_values_hash ={"custom_values"=>{}}
 
     def self.append_values(r)
       r.each do |k,v|
-        @h["custom_values"][k]={"value"=>v, "public"=>true}
+        @custom_values_hash["custom_values"][k]={"value"=>v, "public"=>true}
       end
     end
 
@@ -40,7 +41,7 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
         r['Nome'] = "Sem nome #{@no_name}"
         @no_name+=1
       end
-      unless (r['UF']).present?
+      unless (r['Uf']).present?
         log("Linha: #{line} - Sem UF r: #{r.inspect}")
         r['Uf'] = 'NI'
       end
@@ -69,24 +70,24 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
                     f.strip
                     f.gsub(/\n/,'')
                    end,
-                  :converters=> lambda {|f| f ? f.strip : nil}) do |r| # Iterate over each row of our CSV file
+                  :converters=> lambda {|f| f ? f.strip : nil}) do |row| # Iterate over each row of our CSV file
+        better_csv_row = RedeBrasilPlugin::BetterCsvRow.new(row)
         line += 1
         next if line < 8
-        r = fix_data(r, line)
-        @h = {"custom_values"=>{}}
-        r.delete('name')
-        ap r
-        next unless r['Nome'].present?
-        c = Community.new
-        c.name = r['Nome']
-        if Community.find_by_identifier(c.identifier).class == Community
-          c.identifier = "#{c.identifier}-#{rand(0..1000)}"
+        better_csv_row = fix_data(better_csv_row, line)
+        @custom_values_hash = {"custom_values"=>{}}
+        better_csv_row.delete('name')
+        next unless better_csv_row['Nome'].present?
+        community = Community.new
+        community.name = better_csv_row['Nome']
+        if Community.find_by_identifier(community.identifier).class == Community
+          community.identifier = "#{community.identifier}-#{rand(100..1000)}"
         end
-        c.save!
-        ap r.to_hash
-        append_values(r.to_hash)
-        ap @h
-        result=c.update!(@h, without_protection: true)
+        community.save!
+        ap better_csv_row.to_hash
+        append_values(better_csv_row.to_hash)
+        ap @custom_values_hash
+        result=community.update!(@custom_values_hash, without_protection: true)
         ap result
         # break if line == 30
       end
