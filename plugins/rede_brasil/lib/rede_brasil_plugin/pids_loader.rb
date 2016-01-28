@@ -32,7 +32,7 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
     RedeBrasilPlugin::CustomFieldsFiller.load_domains
     RedeBrasilPlugin::Store.data[:domains].each do |k, v|
       unless v.include? r[k]
-        log("Linha: #{line} - Campo #{k} com valor inválido #{r[k]}")
+        log("Linha: #{line} - Campo #{k} com valor inválido '#{r[k]}'")
       end
     end
   end
