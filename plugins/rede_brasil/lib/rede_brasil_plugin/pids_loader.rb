@@ -28,9 +28,19 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
     "#{dt.year}/#{dt.month}/#{dt.day}"
   end
 
+  def self.check_domains(r, line)
+    RedeBrasilPlugin::CustomFieldsFiller.load_domains
+    RedeBrasilPlugin::Store.data[:domains].each do |k, v|
+      unless v.include? r[k]
+        log("Linha: #{line} - Campo #{k} com valor inválido #{r[k]}")
+      end
+    end
+  end
+
   @no_name=0
   @same_name=0;
   def self.fix_data(r, line)
+    check_domains(r, line)
     if Community.find_by_name(r['Nome']).class == Community
       log("Linha: #{line} - Pid com nome repetido #{r['Nome']} cadastrado como: #{r['Nome']} #{@same_name}")
       r['Nome'] = "#{r['Nome']} #{@same_name}"
@@ -49,15 +59,6 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
     unless (r['Tipo Telecentro']).present?
       log("Linha: #{line} - Sem Tipo Telecentro cadastrado: NI")
       r['Tipo telecentro'] = 'NI'
-      else
-        tipos_telecentro=
-        unless r['Tipo Telecentro'].include?
-        [Comunitário
-        - Escola Aberta
-        - Espaço Cidadão
-        - Ponto Cultural
-
-
     end
     r['Data'] = date_format(r['Data'], line)
     r['Data da Adesão'] = date_format(r['Data da Adesão'], line)
@@ -72,7 +73,7 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
 
   def self.load
     Community.destroy_all
-    line = 1
+    line = 0
     FileUtils.rm_rf @log
 
     CSV.foreach(@transformed, headers: true,
@@ -82,12 +83,12 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
                  end,
                 :converters=> lambda {|f| f ? f.strip : nil}) do |row| # Iterate over each row of our CSV file
       line += 1
-      next if line < 8
+      next if line < 9
       better_csv_row = RedeBrasilPlugin::BetterCsvRow.new(row)
       better_csv_row = fix_data(better_csv_row, line)
       @custom_values_hash = {"custom_values"=>{}}
       better_csv_row.delete('name')
-      next unless better_csv_row['Nome'].present?
+      exit "Error Pid sem nome" unless better_csv_row['Nome'].present?
       community = Community.new
       community.name = better_csv_row['Nome']
       if Community.find_by_identifier(community.identifier).class == Community
@@ -96,6 +97,8 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
       community.save!
       ap better_csv_row.to_hash
       append_values(better_csv_row.to_hash)
+      @custom_values_hash["custom_values"]["is_pid?"]={"value"=>true, "public"=>true}
+      @custom_values_hash["custom_values"]["batch_loaded?"]={"value"=>true, "public"=>true}
       ap @custom_values_hash
       result=community.update!(@custom_values_hash, without_protection: true)
       ap result

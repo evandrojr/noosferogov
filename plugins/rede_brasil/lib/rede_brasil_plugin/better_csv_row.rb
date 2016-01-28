@@ -10,7 +10,11 @@ class RedeBrasilPlugin::BetterCsvRow
   end
 
   def original_key(key)
-    @hash_low_case_keys[key.downcase][:original_key]
+    if(@hash_low_case_keys[key.downcase].present?)
+      @hash_low_case_keys[key.downcase][:original_key]
+    else
+      nil
+    end
   end
 
   def delete(key)
@@ -25,6 +29,7 @@ class RedeBrasilPlugin::BetterCsvRow
     @csv_row.each do  |k,v|
       next unless v.present?
       @csv_row[k] = v.strip
+      @csv_row[k] = @csv_row[k].gsub(/\ {2,}/,' ')
       @csv_row[k] = ActionView::Base.full_sanitizer.sanitize(@csv_row[k])
     end
 
@@ -34,7 +39,7 @@ class RedeBrasilPlugin::BetterCsvRow
     end
   end
 
-  def == (key_x,key_y)
+  def == (key_x, key_y)
     @hash_low_case_keys[key_x.downcase][:value] == @hash_low_case_keys[key_y.downcase][:value]
   end
 
