@@ -22,7 +22,12 @@ class RedeBrasilPlugin::BetterCsvRow
     raise "Parameter must be a CSV::Row" unless csv_row.class == CSV::Row
     @csv_row = csv_row
     @hash_low_case_keys = @csv_row.to_hash
-    @csv_row.each {|k,v| v = ActionView::Base.full_sanitizer.sanitize(v)}
+    @csv_row.each do  |k,v|
+      next unless v.present?
+      @csv_row[k] = v.strip
+      @csv_row[k] = ActionView::Base.full_sanitizer.sanitize(@csv_row[k])
+    end
+
     @csv_row.to_hash.each do |k, v|
       downcased_k = k.downcase
       @hash_low_case_keys[downcased_k] = {value: v, original_key: k}

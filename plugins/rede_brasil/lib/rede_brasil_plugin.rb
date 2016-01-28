@@ -34,7 +34,7 @@ class RedeBrasilPlugin < Noosfero::Plugin
   def self.load_all_from_scratch
     transform
     destroy_custom_fields
-    fill_custom_fiels
+    fill_custom_fields
     load_pids
   end
 
