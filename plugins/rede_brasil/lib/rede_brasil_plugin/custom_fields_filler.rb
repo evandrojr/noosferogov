@@ -12,30 +12,30 @@ class RedeBrasilPlugin::CustomFieldsFiller
       ActiveRecord::Base.connection.execute("TRUNCATE custom_fields RESTART IDENTITY")
     end
 
-    def self.create
+    def self.fill_data
       @e = Environment.default
       line = 1
-      s = []
-      CSV.foreach(@transformed) do |r|
-        s << r
+      meta_data = []
+      CSV.foreach(@transformed) do |row|
+        meta_data << row
         line += 1
         break if line == 9
       end
-      s = s.transpose
+      meta_data = meta_data.transpose
       line = -1
-      dont_create = %w{Nome UF Município Município Bairro	Endereço CEP}
+      # dont_create = %w{Nome UF Município Município Bairro	Endereço CEP}
       dont_create = %w{Nome}
-      s.each do |r|
+      meta_data.each do |row|
         line+=1
-        name = r[0]
+        name = row[0]
         next if line == 0 || dont_create.include?(name)
-        if r[4].present?
-          extras = YAML.load(r[4])
+        if row[4].present?
+          extras = YAML.load(row[4])
         else
           extras = nil
         end
         default_value = "" if default_value.nil?
-        c = CustomField.create(:name => name, :format => r[1], :default_value => default_value, :customized_type => r[3], :extras => extras, :active => r[5], :required => r[6], :signup => r[7], :environment => @e)
+        cf = CustomField.create(:name => name, :format => row[1], :default_value => default_value, :customized_type => row[3], :extras => extras, :active => row[5], :required => row[6], :signup => row[7], :environment => @e)
       end
     end
   end
