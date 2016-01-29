@@ -1,5 +1,5 @@
 name,ID Telecentro,UF,Tipo Telecentro,"Nome da instituição recebedora da doação, conforme ofício",Nome da instituição parceira (responsável pelo telecentro),Nome,Data da Adesão,Telecentros com Micros para Doação Realizado,Telecentros com Micros para Doação Solicitado,Micros para Doação Realizado,Micros para Doação Solicitado,Data,Hora Inauguração,Situação,Status Ativo,Status Inativo,Status Parcial,Status Sem Informação,Município,Bairro,Endereço,CEP,Nome do responsável na instituição parceira  (Nome completo),Telefone do responsável na instituição parceira,E-mail do responsável na instituição parceira,Nome do Responsável no Telecentro (1),CPF do Responsável no Telecentro (1),Telefone do Responsável no Telecentro (1),E-mail do Responsável no Telecentro (1),Nome do Responsável no Telecentro (2),CPF do Responsável no Telecentro (2),Telefone do Responsável no Telecentro (2),E-mail do Responsável no Telecentro (2),"Nº Siscor, Nº Protocolo, Data e Hora",Área Rural,Observação
-format,string,list,list,string,string,string,date,numeric,numeric,numeric,numeric,date,numeric,numeric,numeric,numeric,numeric,numeric,string,string,text,string,string,string,string,string,string,string,string,string,string,string,string,string,list,text
+format,string,list,list,string,string,string,date,numeric,numeric,numeric,numeric,date,numeric,numeric,numeric,numeric,numeric,numeric,string,string,text,string,string,string,string,string,string,string,string,string,string,string,string,string,checkbox,text
 default_value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 customized_type,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community,Community
 extras,,"---
@@ -37,7 +37,8 @@ extras,,"---
 - Ponto Cultural
 ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"---
 - 1
-- ",
+- 0
+",
 active,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 required,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 signup,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1

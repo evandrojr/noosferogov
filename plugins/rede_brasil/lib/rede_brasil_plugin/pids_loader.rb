@@ -88,18 +88,20 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
       @custom_values_hash = {"custom_values"=>{}}
       better_csv_row.delete('name')
       exit "Error Pid sem nome" unless better_csv_row['Nome'].present?
-      community = Community.new
-      community.name = better_csv_row['Nome']
-      if Community.find_by_identifier(community.identifier).class == Community
-        community.identifier = "#{community.identifier}-#{rand(100..1000)}"
-      end
-      community.save!
-      ap better_csv_row.to_hash
-      append_values(better_csv_row.to_hash)
-      @custom_values_hash["custom_values"]["is_pid?"]={"value"=>true, "public"=>true}
-      @custom_values_hash["custom_values"]["batch_loaded?"]={"value"=>true, "public"=>true}
-      ap @custom_values_hash
-      result=community.update!(@custom_values_hash, without_protection: true)
+      ActiveRecord::Base.transaction do
+        community = Community.new
+        community.name = better_csv_row['Nome']
+        if Community.find_by_identifier(community.identifier).class == Community
+          community.identifier = "#{community.identifier}-#{rand(100..1000)}"
+        end
+        community.save!
+        ap better_csv_row.to_hash
+        append_values(better_csv_row.to_hash)
+        @custom_values_hash["custom_values"]["is_pid?"]={"value"=>true, "public"=>true}
+        @custom_values_hash["custom_values"]["batch_loaded?"]={"value"=>true, "public"=>true}
+        ap @custom_values_hash
+        result=community.update!(@custom_values_hash, without_protection: true)
+      end  
       ap result
       # break if line == 30
     end

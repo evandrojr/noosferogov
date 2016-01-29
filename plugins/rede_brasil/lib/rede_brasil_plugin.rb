@@ -33,15 +33,15 @@ class RedeBrasilPlugin < Noosfero::Plugin
     RedeBrasilPlugin::PidsLoader.load
   end
 
+  def self.csv_first_data_row
+    9
+  end
+
   def self.load_all_from_scratch
     transform
     destroy_custom_fields
     fill_custom_fields
     load_pids
-  end
-
-  def self.csv_first_data_row
-    9
   end
 
   def self.destroy_communities_and_load
