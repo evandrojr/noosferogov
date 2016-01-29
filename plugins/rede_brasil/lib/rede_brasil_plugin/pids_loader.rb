@@ -72,18 +72,17 @@ class RedeBrasilPlugin::PidsLoader < MyProfileController
   end
 
   def self.load
-    Community.destroy_all
     line = 0
     FileUtils.rm_rf @log
 
     CSV.foreach(@transformed, headers: true,
                 :header_converters=> lambda do |f|
-                  f.strip
+                  f.strip!
                   f.gsub(/\n/,'')
                  end,
-                :converters=> lambda {|f| f ? f.strip : nil}) do |row| # Iterate over each row of our CSV file
+                :converters=> [:sanitizer, :numeric]) do |row| # Iterate over each row of our CSV file
       line += 1
-      next if line < 9
+      next if line < RedeBrasilPlugin.csv_first_data_row
       better_csv_row = RedeBrasilPlugin::BetterCsvRow.new(row)
       better_csv_row = fix_data(better_csv_row, line)
       @custom_values_hash = {"custom_values"=>{}}

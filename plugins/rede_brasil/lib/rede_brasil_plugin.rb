@@ -1,3 +1,5 @@
+require_relative 'string'
+
 class RedeBrasilPlugin < Noosfero::Plugin
 
   require_relative './rede_brasil_plugin/custom_fields_filler'
@@ -24,7 +26,7 @@ class RedeBrasilPlugin < Noosfero::Plugin
   end
 
   def self.transform
-    RedeBrasilPlugin::Transform.status
+    RedeBrasilPlugin::Transform.execute
   end
 
   def self.load_pids
@@ -36,6 +38,27 @@ class RedeBrasilPlugin < Noosfero::Plugin
     destroy_custom_fields
     fill_custom_fields
     load_pids
+  end
+
+  def self.csv_first_data_row
+    9
+  end
+
+  def self.destroy_communities_and_load
+    transform
+    destroy_custom_fields
+    fill_custom_fields
+    Community.destroy_all
+    load_pids
+  end
+
+  CSV::Converters[:sanitizer] = lambda do |s|
+    if s.class == String
+      s.strip!
+      s.gsub!(/\ {2,}/,' ')
+      ActionView::Base.full_sanitizer.sanitize(s)
+    end
+    s
   end
 
 end

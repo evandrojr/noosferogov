@@ -20,7 +20,7 @@ class RedeBrasilPlugin::CustomFieldsFiller
       CSV.foreach(@transformed) do |row|
         meta_data << row
         line += 1
-        break if line == 9
+        break if line == RedeBrasilPlugin.csv_first_data_row
       end
       meta_data = meta_data.transpose
       line = -1
@@ -45,7 +45,7 @@ class RedeBrasilPlugin::CustomFieldsFiller
       CSV.foreach(@transformed) do |row|
         meta_data << row
         line += 1
-        break if line == 9
+        break if line == RedeBrasilPlugin.csv_first_data_row
       end
       meta_data = meta_data.transpose
       line = -1
@@ -64,7 +64,7 @@ class RedeBrasilPlugin::CustomFieldsFiller
         @customized_type=row[3]
         CustomField.create(:name => name, :format => row[1], :default_value => default_value, :customized_type => @customized_type, :extras => extras, :active => row[5], :required => row[6], :signup => row[7], :environment => @e)
       end
-      # CustomField.create(:name => "is_pid?", :format => boolean, :default_value => true, :customized_type => @customized_type, :extras => nil, :active => false, :required => false, :signup => false, :environment => @e)
-      # CustomField.create(:name => "batch_loaded?", :format => boolean, :default_value => true, :customized_type => @customized_type, :extras => nil, :active => false, :required => false, :signup => false, :environment => @e)
+      CustomField.create(:name => "is_pid?", :format => checkbox, :default_value => true, :customized_type => @customized_type, :extras => nil, :active => false, :required => false, :signup => false, :environment => @e)
+      CustomField.create(:name => "batch_loaded?", :format => checkbox, :default_value => true, :customized_type => @customized_type, :extras => nil, :active => false, :required => false, :signup => false, :environment => @e)
     end
   end
