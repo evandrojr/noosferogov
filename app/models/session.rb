@@ -1,7 +1,6 @@
 class Session < ActiveRecord::SessionStore::Session
 
   def self.find_by_session_id(session_id)
-    connection.clear_query_cache
     where(session_id: session_id).first
   end
 
