@@ -1,7 +1,8 @@
 class Session < ActiveRecord::SessionStore::Session
 
   def self.find_by_session_id(session_id)
-    where(session_id: session_id).all.first
+    connection.clear_query_cache
+    where(session_id: session_id).first
   end
 
   belongs_to :user
