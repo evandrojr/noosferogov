@@ -6,7 +6,7 @@ class AccountController < ApplicationController
   before_filter :redirect_if_logged_in, :only => [:login, :signup]
   before_filter :protect_from_bots, :only => :signup
 
-  protect_from_forgery except: [:login]
+  #protect_from_forgery except: [:login]
 
   helper CustomFieldsHelper
   # say something nice, you goof!  something sweet.
