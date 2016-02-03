@@ -1,7 +1,7 @@
 require 'noosfero/multi_tenancy'
 
 class ApplicationController < ActionController::Base
-  protect_from_forgery
+  #protect_from_forgery
 
   before_filter :setup_multitenancy
   before_filter :detect_stuff_by_domain
