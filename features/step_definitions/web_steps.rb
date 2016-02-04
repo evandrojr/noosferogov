@@ -39,7 +39,22 @@ end
 
 When /^(?:|I )follow "([^"]*)"(?: within "([^"]*)")?$/ do |link, selector|
   with_scope(selector) do
-    click_link(link, :match => :prefer_exact)
+    begin
+      click_link(link, :match => :prefer_exact)
+    rescue Selenium::WebDriver::Error::UnknownError => selenium_error
+      if selenium_error.message.start_with? 'Element is not clickable at point'
+        href = find_link(link)[:href]
+
+        warn "#{selenium_error.message}\n\n"\
+             "Trying to overcome this by redirecting you to the link's href:\n"\
+             "\t'#{href}'\n\n"\
+             "Good luck and be careful that this may produce hidden links to work on tests!\n"
+
+        visit href
+      else
+        raise selenium_error
+      end
+    end
   end
 end
 
@@ -107,6 +122,7 @@ When /^(?:|I )attach the file "([^"]*)" to "([^"]*)"(?: within "([^"]*)")?$/ do 
   with_scope(selector) do
     attach_file(field, path)
   end
+  sleep 1
 end
 
 Then /^(?:|I )should see JSON:$/ do |expected_json|
@@ -258,6 +274,10 @@ Then /^display "([^\"]*)"$/ do |element|
   # have the execute_script method which does not returns the script. Checout:
   #   * https://github.com/jnicklas/capybara/issues/76
   evaluate_script("jQuery('#{element}').show() && false;")
+end
+
+Then /^I fill in tinyMCE "(.*?)" with "(.*?)"$/ do |field, content|
+  execute_script("$(tinymce.editors['#{field}'].setContent('#{content}'))")
 end
 
 Then /^there should be a div with class "([^"]*)"$/ do |klass|
