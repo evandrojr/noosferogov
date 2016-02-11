@@ -247,7 +247,7 @@ class APIHelpersTest < ActiveSupport::TestCase
 
  should 'do not test captcha when there is no captcha plugin enabled' do
    environment = Environment.new
-   assert test_captcha("127.0.0.1", {}, environment)
+   assert verify_captcha("127.0.0.1", {}, environment)
  end
 
 ###### END Captcha tests ######

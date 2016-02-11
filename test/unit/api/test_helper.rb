@@ -11,7 +11,7 @@ end
 module Noosfero
   module API
     module APIHelpers
-      def test_captcha(*args)
+      def verify_captcha(*args)
         return true if OutcomeCaptcha.outcome_captcha_test
         render_api_error!("Error testing captcha", 403)
       end

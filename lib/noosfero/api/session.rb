@@ -12,9 +12,9 @@ module Noosfero
       ################################
       post "/login-captcha" do
         remote_ip = (request.respond_to?(:remote_ip) && request.remote_ip) || (env && env['REMOTE_ADDR'])
-        # test_captcha will render_api_error! and exit in case of any problem
+        # verify_captcha will render_api_error! and exit in case of any problem
         # this return is just to improve the clarity of the execution path
-        return unless test_captcha(remote_ip, params, environment)
+        return unless verify_captcha(remote_ip, params, environment)
         ## Creates and caches a captcha session store
         store = Noosfero::API::SessionStore.create("captcha")
         ## Initialize the data for the session store
@@ -70,9 +70,9 @@ module Noosfero
       post "/register" do
         attrs = attributes_for_keys [:email, :login, :password, :password_confirmation] + environment.signup_person_fields
         remote_ip = (request.respond_to?(:remote_ip) && request.remote_ip) || (env && env['REMOTE_ADDR'])
-        # test_captcha will render_api_error! and exit in case of any problem
+        # verify_captcha will render_api_error! and exit in case of any problem
         # this return is just to improve the clarity of the execution path
-        return unless test_captcha(remote_ip, params, environment)
+        return unless verify_captcha(remote_ip, params, environment)
 
         name = params[:name].present? ? params[:name] : attrs[:email]
         attrs[:password_confirmation] = attrs[:password] if !attrs.has_key?(:password_confirmation)
@@ -134,9 +134,9 @@ module Noosfero
         requestors = fetch_requestors(params[:value])
         not_found! if requestors.blank?
         remote_ip = (request.respond_to?(:remote_ip) && request.remote_ip) || (env && env['REMOTE_ADDR'])
-        # test_captcha will render_api_error! and exit in case of any problem
+        # verify_captcha will render_api_error! and exit in case of any problem
         # this return is just to improve the clarity of the execution path
-        return unless test_captcha(remote_ip, params, environment)
+        return unless verify_captcha(remote_ip, params, environment)
         requestors.each do |requestor|
           ChangePassword.create!(:requestor => requestor)
         end
@@ -152,9 +152,9 @@ module Noosfero
         requestors = fetch_requestors(params[:value])
         not_found! if requestors.blank?
         remote_ip = (request.respond_to?(:remote_ip) && request.remote_ip) || (env && env['REMOTE_ADDR'])
-        # test_captcha will render_api_error! and exit in case of any problem
+        # verify_captcha will render_api_error! and exit in case of any problem
         # this return is just to improve the clarity of the execution path
-        return unless test_captcha(remote_ip, params, environment)
+        return unless verify_captcha(remote_ip, params, environment)
         requestors.each do |requestor|
           requestor.user.resend_activation_code
         end

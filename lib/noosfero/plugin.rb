@@ -679,7 +679,7 @@ class Noosfero::Plugin
   end
 
   #By default will return nil that will mean not implented by the plugin
-  def test_captcha(*args)
+  def verify_captcha(*args)
     nil
   end
 
