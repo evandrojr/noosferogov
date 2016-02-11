@@ -568,12 +568,6 @@ function userDataCallback(data) {
     // logged in
     jQuery('head').append('<meta content="authenticity_token" name="csrf-param" />');
     jQuery('head').append('<meta content="'+jQuery.cookie("_noosfero_.XSRF-TOKEN")+'" name="csrf-token" />');
-    jQuery.ajaxSetup({
-      cache: false,
-      headers: {
-        'X-XSRF-TOKEN': jQuery.cookie("_noosfero_.XSRF-TOKEN")
-      }
-    });
   }
   if (data.notice) {
     display_notice(data.notice);

@@ -1,9 +1,8 @@
 require 'noosfero/multi_tenancy'
 
 class ApplicationController < ActionController::Base
-  #protect_from_forgery
+  protect_from_forgery
 
-  before_filter :setup_multitenancy
   before_filter :detect_stuff_by_domain
   before_filter :init_noosfero_plugins
   before_filter :allow_cross_domain_access
@@ -107,12 +106,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def verified_request?
-    true
-    #super || valid_authenticity_token?(session, request.headers['X-XSRF-TOKEN'])
-  end
-
-  def setup_multitenancy
-    Noosfero::MultiTenancy.setup!(request.host)
+    super || form_authenticity_token == request.headers['X-XSRF-TOKEN']
   end
 
   def boxes_editor?
@@ -137,12 +131,11 @@ class ApplicationController < ActionController::Base
     @domain = Domain.find_by_name(request.host)
     if @domain.nil?
       @environment = Environment.default
-      if @environment.nil? && Rails.env.development?
-        # This should only happen in development ...
+      # Avoid crashes on test and development setups
+      if @environment.nil? && !Rails.env.production?
         @environment = Environment.new
         @environment.name = "Noosfero"
         @environment.is_default = true
-        @environment.save!
       end
     else
       @environment = @domain.environment

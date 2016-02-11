@@ -15,6 +15,9 @@ module Noosfero
 
     require 'noosfero/plugin'
 
+    require 'noosfero/multi_tenancy'
+    config.middleware.use Noosfero::MultiTenancy::Middleware
+
     # Adds custom attributes to the Set of allowed html attributes for the #sanitize helper
     config.action_view.sanitized_allowed_attributes = 'align', 'border', 'alt', 'vspace', 'hspace', 'width', 'heigth', 'value', 'type', 'data', 'style', 'target', 'codebase', 'archive', 'classid', 'code', 'flashvars', 'scrolling', 'frameborder', 'controls', 'autoplay', 'colspan', 'rowspan', 'usemap', 'shape', 'coords'
 

@@ -1,7 +1,8 @@
 class Session < ActiveRecord::SessionStore::Session
 
-  def self.find_by_session_id(session_id)
-    where(session_id: session_id).first
+  # removed and redefined on super class
+  def self.find_by_session_id session_id
+    super
   end
 
   belongs_to :user
