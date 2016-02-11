@@ -1,7 +1,7 @@
 require 'noosfero/multi_tenancy'
 
 class ApplicationController < ActionController::Base
-  #protect_from_forgery
+  protect_from_forgery
 
   before_filter :detect_stuff_by_domain
   before_filter :init_noosfero_plugins
@@ -106,8 +106,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def verified_request?
-    true
-    #super || valid_authenticity_token?(session, request.headers['X-XSRF-TOKEN'])
+    super || form_authenticity_token == request.headers['X-XSRF-TOKEN']
   end
 
   def boxes_editor?
