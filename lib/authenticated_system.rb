@@ -23,17 +23,6 @@ module AuthenticatedSystem
     def current_user
       @current_user ||= begin
         id = session[:user]
-
-        session_id = cookies[:_noosfero_session]
-        if id.blank? && session_id.present?
-          Session.connection.clear_query_cache
-          session_obj = Session.where(session_id: session_id).first
-          if session_obj.present?
-            session = session_obj.data
-            id = session_obj.user_id
-          end
-        end
-
         user = User.where(id: id).first if id
         user.session = session if user
         User.current = user
