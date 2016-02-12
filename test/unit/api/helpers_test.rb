@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/test_helper'
-require File.expand_path(File.dirname(__FILE__) + "/../../../lib/noosfero/api/helpers")
+require_relative 'test_helper'
+require 'noosfero/api/helpers'
 
 class APIHelpersTest < ActiveSupport::TestCase
 
@@ -25,15 +25,6 @@ class APIHelpersTest < ActiveSupport::TestCase
     assert_equal user, current_user
   end
 
-  should 'not get the current user with expired token' do
-    user = create_user('someuser')
-    user.generate_private_token!
-    user.private_token_generated_at = DateTime.now.prev_year
-    user.save
-    self.params = {:private_token => user.private_token}
-    assert_nil current_user
-  end
-
   should 'get the person of current user' do
     user = create_user('someuser')
     user.generate_private_token!
@@ -54,35 +45,35 @@ class APIHelpersTest < ActiveSupport::TestCase
   should 'limit be defined as the params limit value' do
     local_limit = 30
     self.params= {:limit => local_limit}
-    assert_equal local_limit, limit 
+    assert_equal local_limit, limit
   end
 
   should 'return default limit if the limit parameter is minor than zero' do
     self.params= {:limit => -1}
-    assert_equal 20, limit 
+    assert_equal 20, limit
   end
 
   should 'the default limit be 20' do
-    assert_equal 20, limit 
+    assert_equal 20, limit
   end
 
   should 'the beginning of the period be the first existent date if no from date is passsed as parameter' do
     assert_equal Time.at(0).to_datetime, period(nil, nil).to_a[0]
-  end 
+  end
 
   should 'the beginning of the period be from date passsed as parameter' do
     from = DateTime.now
     assert_equal from, period(from, nil).min
-  end 
+  end
 
   should 'the end of the period be now if no until date is passsed as parameter' do
     assert_in_delta DateTime.now, period(nil, nil).max
-  end 
+  end
 
   should 'the end of the period be until date passsed as parameter' do
     until_date = DateTime.now
     assert_equal until_date, period(nil, until_date).max
-  end 
+  end
 
   should 'parse_content_type return nil if its blank' do
     assert_nil parse_content_type("")
@@ -96,23 +87,23 @@ class APIHelpersTest < ActiveSupport::TestCase
     assert_equivalent ['TextArticle','TinyMceArticle'], parse_content_type("TextArticle,TinyMceArticle")
   end
 
-  should 'find_article return article by id in list passed for user with permission' do 
+  should 'find_article return article by id in list passed for user with permission' do
     user = create_user('someuser')
     a = fast_create(Article, :profile_id => user.person.id)
     fast_create(Article, :profile_id => user.person.id)
     fast_create(Article, :profile_id => user.person.id)
- 
+
     user.generate_private_token!
     User.expects(:find_by_private_token).returns(user)
     assert_equal a, find_article(user.person.articles, a.id)
   end
 
-  should 'find_article return forbidden when a user try to access an article without permission' do 
+  should 'find_article return forbidden when a user try to access an article without permission' do
     user = create_user('someuser')
     p = fast_create(Profile)
     a = fast_create(Article, :published => false, :profile_id => p.id)
     fast_create(Article, :profile_id => p.id)
- 
+
     user.generate_private_token!
     User.expects(:find_by_private_token).returns(user)
     assert_equal 403, find_article(p.articles, a.id).last
@@ -159,6 +150,39 @@ class APIHelpersTest < ActiveSupport::TestCase
 
   should 'make_conditions_with_parameter return no type parameter if it was not defined any content type' do
     assert_nil make_conditions_with_parameter[:type]
+  end
+
+  #test_should_make_order_with_parameters_return_order_if attribute_is_found_at_object_association
+  should 'make_order_with_parameters return order if attribute is found at object association' do
+    environment = Environment.new
+    params = {:order => "name ASC"}
+    assert_equal "name ASC", make_order_with_parameters(environment, "articles", params)
+  end
+
+  # test added to check for eventual sql injection vunerabillity
+  #test_should_make_order_with_parameters_return_default_order_if_attributes_not_exists
+  should 'make_order_with_parameters return default order if attributes not exists' do
+    environment = Environment.new
+    params = {:order => "CRAZY_FIELD ASC"} # quote used to check sql injection vunerabillity
+    assert_equal "created_at DESC", make_order_with_parameters(environment, "articles", params)
+  end
+
+  should 'make_order_with_parameters return default order if sql injection detected' do
+    environment = Environment.new
+    params = {:order => "name' ASC"} # quote used to check sql injection vunerabillity
+    assert_equal "created_at DESC", make_order_with_parameters(environment, "articles", params)
+  end
+
+  should 'make_order_with_parameters return RANDOM() if random is passed' do
+    environment = Environment.new
+    params = {:order => "random"} # quote used to check sql injection vunerabillity
+    assert_equal "RANDOM()", make_order_with_parameters(environment, "articles", params)
+  end
+
+  should 'make_order_with_parameters return RANDOM() if random function is passed' do
+    environment = Environment.new
+    params = {:order => "random()"} # quote used to check sql injection vunerabillity
+    assert_equal "RANDOM()", make_order_with_parameters(environment, "articles", params)
   end
 
   should 'render not_found if endpoint is unavailable' do

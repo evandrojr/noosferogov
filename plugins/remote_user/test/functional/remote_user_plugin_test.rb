@@ -1,13 +1,14 @@
-require File.dirname(__FILE__) + '/../../../../test/test_helper'
-
-# Re-raise errors caught by the controller.
-class AccountController; def rescue_action(e) raise e end; end
+require 'test_helper'
 
 class AccountControllerTest < ActionController::TestCase
   def setup
     @environment = Environment.default
     @environment.enabled_plugins = ['RemoteUserPlugin']
     @environment.save
+
+    @another_environment = Environment.new(name: "AnotherEnvironment")
+    @another_environment.enabled_plugins = ['RemoteUserPlugin']
+    @another_environment.save
 
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
@@ -138,5 +139,27 @@ class AccountControllerTest < ActionController::TestCase
 
     assert session[:user].blank?
     assert_response 404
+  end
+
+  should "create an user in the correct environment" do
+    @controller.stubs(:environment).returns(@another_environment)
+    @request.env["HTTP_REMOTE_USER"] = "testuser"
+
+    get :index
+    user = User.last
+    assert_equal user.environment, @another_environment
+  end
+
+  should "create an user in both environments" do
+    user = create_user('testuser', :email => 'testuser@example.com', :password => 'test', :password_confirmation => 'test')
+    @controller.stubs(:environment).returns(@another_environment)
+    @request.env["HTTP_REMOTE_USER"] = "testuser"
+
+    users = User.where(:login => 'testuser')
+    assert_equal users.count, 1
+
+    get :index
+    users = User.where(:login => 'testuser')
+    assert_equal users.count, 2
   end
 end
