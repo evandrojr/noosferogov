@@ -1,3 +1,5 @@
+require 'csv'
+
 module CommentGroupPlugin::CommentsReport
 
   #FIXME make this test
@@ -27,7 +29,7 @@ module CommentGroupPlugin::CommentsReport
     return _("No comments for article[%{id}]: %{path}\n\n") % {:id => article.id, :path => article.path} if @export.empty?
 
     column_names = @export.first.keys
-    CSV.generate do |csv|
+    CSV.generate(force_quotes: true) do |csv|
       csv << column_names
       @export.each { |x| csv << x.values }
     end

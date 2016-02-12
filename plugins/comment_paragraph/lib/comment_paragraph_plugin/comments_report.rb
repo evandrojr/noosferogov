@@ -1,3 +1,5 @@
+require 'csv'
+
 module CommentParagraphPlugin::CommentsReport
 
   #FIXME make this test
@@ -15,7 +17,7 @@ module CommentParagraphPlugin::CommentsReport
           @export << create_comment_element(comment, paragraph, paragraph_id)
         end
       else # There are no comments for this paragraph
-        @export << { paragraph_id: paragraph_id, paragraph_text: paragraph }
+        @export << create_comment_element(nil, paragraph, paragraph_id)
       end
       paragraph_id += 1
     end
@@ -27,7 +29,7 @@ module CommentParagraphPlugin::CommentsReport
     return _("No comments for article[%{id}]: %{path}\n\n") % {:id => article.id, :path => article.path} if @export.empty?
 
     column_names = @export.first.keys
-    CSV.generate do |csv|
+    CSV.generate(force_quotes: true) do |csv|
       csv << column_names
       @export.each { |x| csv << x.values }
     end
@@ -38,13 +40,13 @@ module CommentParagraphPlugin::CommentsReport
   def create_comment_element(comment, paragraph, paragraph_id)
     {
       paragraph_id: paragraph_id,
-      paragraph_text: paragraph.present? ? paragraph.text : nil,
-      comment_id: comment.id,
-      comment_reply_to: comment.reply_of_id,
-      comment_title: comment.title,
-      comment_content: comment.body,
-      comment_author_name: comment.author_name,
-      comment_author_email: comment.author_email
+      paragraph_text: paragraph.present? ? paragraph.text.strip : nil,
+      comment_id: comment.present? ? comment.id : '-',
+      comment_reply_to: comment.present? ? comment.reply_of_id : '-',
+      comment_title: comment.present? ? comment.title : '-',
+      comment_content: comment.present? ? comment.body : '-',
+      comment_author_name: comment.present? ? comment.author_name : '-',
+      comment_author_email: comment.present? ? comment.author_email : '-'
     }
   end
 
