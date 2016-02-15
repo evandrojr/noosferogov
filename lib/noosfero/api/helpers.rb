@@ -57,7 +57,9 @@ require_relative '../../find_by_contents'
               options.merge!(fields.symbolize_keys.slice(:only, :except))
             end
           rescue
-            options[:only] = Array.wrap(params[:fields])
+            fields = params[:fields]
+            fields = fields.split(',') if fields.kind_of?(String)
+            options[:only] = Array.wrap(fields)
           end
         end
         present model, options
