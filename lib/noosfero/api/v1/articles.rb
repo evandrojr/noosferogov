@@ -40,7 +40,7 @@ module Noosfero
 
           desc "Return the articles followed by me"
           get 'followed_by_me' do
-            present_articles(current_person, 'following_articles')
+            present_articles_for_asset(current_person, 'following_articles')
           end
 
           desc "Return one article by id" do
