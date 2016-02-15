@@ -667,6 +667,15 @@ class ArticlesTest < ActiveSupport::TestCase
     assert_includes json["articles"].map { |a| a["id"] }, article2.id
   end
 
+  should 'list articles followed by me' do
+    article1 = fast_create(Article, :profile_id => user.person.id, :name => "Some thing")
+    article2 = fast_create(Article, :profile_id => user.person.id, :name => "Some other thing")
+    article1.person_followers << @person
+    get "/api/v1/articles/followed_by_me?#{params.to_query}"
+    json = JSON.parse(last_response.body)
+    assert_equal [article1.id], json['articles'].map { |a| a['id'] }
+  end
+
   ARTICLE_ATTRIBUTES = %w(followers_count votes_count comments_count)
 
   ARTICLE_ATTRIBUTES.map do |attribute|
